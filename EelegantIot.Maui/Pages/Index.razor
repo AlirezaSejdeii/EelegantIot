@@ -1,0 +1,33 @@
+﻿@page "/"
+<PageTitle>بررسی وضعیت</PageTitle>
+@if (Loading)
+{
+    <MudGrid Justify="Justify.Center" Class="mt-6">
+        <MudItem>
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    public bool Loading { get; set; }
+    [Inject] public IUserService UserService { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.NavigateTo("/devices");
+
+        // Loading = true;
+        // bool isLogedIn = await userService.IsLoggedIn();
+        // if (isLogedIn)
+        // {
+        //     // TODO: GO TO DEVICES
+        // }
+        // else
+        // {
+        //     navigationManager.NavigateTo("/login");
+        // }
+        // Loading = false;
+    }
+
+}

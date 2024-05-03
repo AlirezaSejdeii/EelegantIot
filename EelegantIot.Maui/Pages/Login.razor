@@ -1,0 +1,42 @@
+﻿@page "/login"
+<PageTitle>ورود به حساب کاربری</PageTitle>
+<MudPaper Class="d-flex flex-column m-5 justify-content-center align-content-end">
+    <MudItem>
+        @if (!IsLoading)
+        {
+            <EditForm Model="_request" OnValidSubmit="LoginOrCreateAccount">
+                <FluentValidationValidator></FluentValidationValidator>
+                <MudCardContent>
+                    <MudTextField Label="نام کاربری" @bind-Value="_request.Username" For="(()=> _request.Username)" />
+                    <MudTextField InputType="InputType.Password" Label="کلمه عبور" @bind-Value="_request.Password" For="(()=> _request.Password)" />
+
+                    <MudButton FullWidth ButtonType="ButtonType.Submit" Color="Color.Info" EndIcon="@Icons.Material.Filled.Login">ورود</MudButton>
+                </MudCardContent>
+            </EditForm>
+        }
+        else
+        {
+            <MudGrid Justify="Justify.Center" Spacing="100">
+                <MudProgressCircular Color="Color.Warning" Indeterminate="true"  />
+            </MudGrid>
+        }
+    </MudItem>
+</MudPaper>
+
+@code {
+    [Inject] public IUserService UserService { get; set; }
+    [Inject] public ISnackbar Snackbar { get; set; }
+    public bool IsLoading { get; set; }
+    LoginRequest _request = new();
+
+    public async Task LoginOrCreateAccount()
+    {
+        IsLoading = true;
+        string? error = await UserService.LoginOrSignUpUser(_request.Username, _request.Password);
+        if (error is not null)
+        {
+            Snackbar.Add(severity: Severity.Error, message: error);
+        }
+        IsLoading = false;
+    }
+}

@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+<MudRTLProvider RightToLeft=true>
+    <MudThemeProvider IsDarkMode="false"/>
+    <MudDialogProvider/>
+    <MudSnackbarProvider/>
+
+    <MudLayout>
+        <MudAppBar>
+            <MudGrid Justify="Justify.SpaceBetween" Spacing="50">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenNewDevice())"/>
+            </MudGrid>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen">
+            <NavMenu/>
+        </MudDrawer>
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.Large">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+</MudRTLProvider>
+
+@code {
+    bool _drawerOpen;
+
+    [Inject] public NavigationManager NavigationManager { get; set; }
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    void OpenNewDevice()
+    {
+        NavigationManager.NavigateTo("add-device");
+    }
+
+}

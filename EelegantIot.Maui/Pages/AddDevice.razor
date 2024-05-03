@@ -1,0 +1,34 @@
+@page "/add-device"
+<MudPaper Class="d-flex flex-column m-5 justify-content-center align-content-end">
+    @if (!IsLoading)
+    {
+        <EditForm Model="_request" OnValidSubmit="CreateDevice">
+            <FluentValidationValidator></FluentValidationValidator>
+            <MudCardContent>
+                <MudTextField Label="نام" @bind-Value="_request.Name" For="(() => _request.Name)"/>
+                <MudTextField Label="پین" @bind-Value="_request.Pin" For="(() => _request.Pin)"/>
+
+                <MudButton FullWidth ButtonType="ButtonType.Submit" Color="Color.Info" EndIcon="@Icons.Material.Filled.Login">افزودن</MudButton>
+            </MudCardContent>
+        </EditForm>
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center" Spacing="100">
+            <MudProgressCircular Color="Color.Warning" Indeterminate="true"/>
+        </MudGrid>
+    }
+</MudPaper>
+
+@code {
+    NewDeviceRequest _request = new();
+    public bool IsLoading { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
+
+    public async Task CreateDevice()
+    {
+        NavigationManager.NavigateTo("devices");
+        await Task.Delay(500);
+    }
+
+}

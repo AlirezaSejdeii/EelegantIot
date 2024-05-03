@@ -1,0 +1,113 @@
+@page "/device-detail"
+@using System.Globalization
+@using System.Reflection
+<MudCard Class="mt-3" Outlined="true">
+    <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+        <MudText Typo="Typo.h6">دما</MudText>
+        <MudText Typo="Typo.h6">26</MudText>
+    </MudStack>
+    <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+        <MudText Typo="Typo.h6">جریان</MudText>
+        <MudText Typo="Typo.h6">3</MudText>
+    </MudStack>
+</MudCard>
+
+<MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" Class="mt-3">خاموش کن</MudButton>
+
+<MudCard Class="mt-3" Outlined="true">
+    <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+        <MudText Typo="Typo.h6">تایمر</MudText>
+        <MudSwitch Color="Color.Primary" Value="true"></MudSwitch>
+    </MudStack>
+
+    <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+        <MudText Typo="Typo.h6">زمان شروع</MudText>
+        <MudTextField InputType="InputType.Time" Value="startTime"></MudTextField>
+    </MudStack>
+    <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+        <MudText Typo="Typo.h6">زمان پایان</MudText>
+        <MudTextField InputType="InputType.Time" Value="endTime"></MudTextField>
+    </MudStack>
+    <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+        <MudText Typo="Typo.h6">تکرار</MudText>
+        <MudGrid Justify="Justify.Center">
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => saturdaySelected = !saturdaySelected)" Color="saturdaySelected ? Color.Primary : Color.Dark">شنبه</MudButton>
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => sundaySelected = !sundaySelected)" Color="sundaySelected ? Color.Primary : Color.Dark">یکشنبه</MudButton>
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => mondaySelected = !mondaySelected)" Color="mondaySelected ? Color.Primary : Color.Dark">دوشنبه</MudButton>
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => tuesdaySelected = !tuesdaySelected)" Color="tuesdaySelected ? Color.Primary : Color.Dark">سه شنبه</MudButton>
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => wednesdaySelected = !wednesdaySelected)" Color="wednesdaySelected ? Color.Primary : Color.Dark">چهار شنبه</MudButton>
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => thursdaySelected = !thursdaySelected)" Color="thursdaySelected ? Color.Primary : Color.Dark">پنج شنبه</MudButton>
+            <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => fridaySelected = !fridaySelected)" Color="fridaySelected ? Color.Primary : Color.Dark">جمعه</MudButton>
+        </MudGrid>
+    </MudStack>
+</MudCard>
+
+<MudCard Class="mt-3" Outlined="true">
+    <MudText Typo="Typo.h6">نمودار دما</MudText>
+    <MudDateRangePicker Culture="GetPersianCulture()"></MudDateRangePicker>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@TempSeries" XAxisLabels="@XAxisLabels" Width="100%" Height="500px"/>
+</MudCard>
+<MudCard Class="mt-3" Outlined="true">
+    <MudText Typo="Typo.h6">نمودار جریان</MudText>
+    <MudDateRangePicker Culture="GetPersianCulture()"></MudDateRangePicker>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@VoltageSeries" XAxisLabels="@XAxisLabels" Width="100%" Height="500px"/>
+</MudCard>
+
+
+@code {
+    TimeOnly startTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(-2));
+    TimeOnly endTime = TimeOnly.FromDateTime(DateTime.Now);
+    bool saturdaySelected;
+    bool sundaySelected;
+    bool mondaySelected;
+    bool tuesdaySelected;
+    bool wednesdaySelected;
+    bool thursdaySelected;
+    bool fridaySelected;
+
+    public List<ChartSeries> TempSeries =
+    [
+        new ChartSeries() { Name = "دما", Data = [90, 79, 72, 69, 62, 62, 55] },
+    ];
+
+    public string[] XAxisLabels = ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"];
+
+    public List<ChartSeries> VoltageSeries =
+    [
+        new ChartSeries() { Name = "جریان", Data = [90, 79, 72, 69, 62, 62, 55] },
+    ];
+    
+    public CultureInfo GetPersianCulture()
+    {
+        var culture = new CultureInfo("fa-IR");
+        DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
+        formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
+        formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
+        var monthNames = new[]
+        {
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن",
+            "اسفند",
+            "",
+        };
+        formatInfo.AbbreviatedMonthNames =
+            formatInfo.MonthNames =
+                formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
+        formatInfo.AMDesignator = "ق.ظ";
+        formatInfo.PMDesignator = "ب.ظ";
+        formatInfo.ShortDatePattern = "yyyy/MM/dd";
+        formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
+        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
+        System.Globalization.Calendar cal = new PersianCalendar();
+        FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (fieldInfo != null)
+            fieldInfo.SetValue(culture, cal);
+        FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (info != null)
+            info.SetValue(formatInfo, cal);
+        culture.NumberFormat.NumberDecimalSeparator = "/";
+        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
+        culture.NumberFormat.NumberNegativePattern = 0;
+        return culture;
+    }
+
+}

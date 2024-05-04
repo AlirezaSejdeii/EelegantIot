@@ -4,7 +4,7 @@
 {
     <MudGrid Justify="Justify.Center" Class="mt-6">
         <MudItem>
-            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"  />
         </MudItem>
     </MudGrid>
 }
@@ -15,19 +15,19 @@
     [Inject] public NavigationManager NavigationManager { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        NavigationManager.NavigateTo("/devices");
+        // NavigationManager.NavigateTo("/devices");
 
-        // Loading = true;
-        // bool isLogedIn = await userService.IsLoggedIn();
-        // if (isLogedIn)
-        // {
-        //     // TODO: GO TO DEVICES
-        // }
-        // else
-        // {
-        //     navigationManager.NavigateTo("/login");
-        // }
-        // Loading = false;
+        Loading = true;
+        bool isLogedIn = await UserService.IsLoggedIn();
+        if (isLogedIn)
+        {
+            // TODO: GO TO DEVICES
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        Loading = false;
     }
 
 }

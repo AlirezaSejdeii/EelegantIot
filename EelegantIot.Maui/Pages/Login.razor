@@ -7,8 +7,8 @@
             <EditForm Model="_request" OnValidSubmit="LoginOrCreateAccount">
                 <FluentValidationValidator></FluentValidationValidator>
                 <MudCardContent>
-                    <MudTextField Label="نام کاربری" @bind-Value="_request.Username" For="(()=> _request.Username)" />
-                    <MudTextField InputType="InputType.Password" Label="کلمه عبور" @bind-Value="_request.Password" For="(()=> _request.Password)" />
+                    <MudTextField Label="نام کاربری" @bind-Value="_request.Username" For="(() => _request.Username)"/>
+                    <MudTextField InputType="InputType.Password" Label="کلمه عبور" @bind-Value="_request.Password" For="(() => _request.Password)"/>
 
                     <MudButton FullWidth ButtonType="ButtonType.Submit" Color="Color.Info" EndIcon="@Icons.Material.Filled.Login">ورود</MudButton>
                 </MudCardContent>
@@ -17,7 +17,7 @@
         else
         {
             <MudGrid Justify="Justify.Center" Spacing="100">
-                <MudProgressCircular Color="Color.Warning" Indeterminate="true"  />
+                <MudProgressCircular Color="Color.Warning" Indeterminate="true"/>
             </MudGrid>
         }
     </MudItem>
@@ -26,6 +26,7 @@
 @code {
     [Inject] public IUserService UserService { get; set; }
     [Inject] public ISnackbar Snackbar { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
     public bool IsLoading { get; set; }
     LoginRequest _request = new();
 
@@ -37,6 +38,11 @@
         {
             Snackbar.Add(severity: Severity.Error, message: error);
         }
+        else
+        {
+            NavigationManager.NavigateTo("/devices");
+        }
         IsLoading = false;
     }
+
 }

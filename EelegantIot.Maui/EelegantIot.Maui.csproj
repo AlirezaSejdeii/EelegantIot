@@ -60,10 +60,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\EelegantIot.Shared\EelegantIot.Shared.csproj" />
     </ItemGroup>
 

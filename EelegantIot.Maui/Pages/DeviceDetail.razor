@@ -60,10 +60,10 @@
     </MudCardHeader>
     <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
     <MudCardContent>
-        <MudDateRangePicker Culture="GetPersianCulture()"></MudDateRangePicker>
+        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
     </MudCardContent>
     <MudCardActions>
-        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenDialog">نمایش نمودار</MudButton>
+        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
     </MudCardActions>
 </MudCard>
 <MudCard Class="mt-3" Outlined="true">
@@ -72,10 +72,10 @@
     </MudCardHeader>
     <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
     <MudCardContent>
-        <MudDateRangePicker Culture="GetPersianCulture()"></MudDateRangePicker>
+        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
     </MudCardContent>
     <MudCardActions>
-        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenDialog">نمایش نمودار</MudButton>
+        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
     </MudCardActions>
 </MudCard>
 
@@ -91,43 +91,15 @@
 
     [Inject] public IDialogService DialogService { get; set; }
 
-    public void OpenDialog()
+    public void OpenChartDialog()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true};
         DialogService.Show<Chart>("نمایش چارت", options);
     }
-
-    public CultureInfo GetPersianCulture()
+    
+    public void OpenDatePickerDialog()
     {
-        var culture = new CultureInfo("fa-IR");
-        DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
-        formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
-        formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
-        var monthNames = new[]
-        {
-            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن",
-            "اسفند",
-            "",
-        };
-        formatInfo.AbbreviatedMonthNames =
-            formatInfo.MonthNames =
-                formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
-        formatInfo.AMDesignator = "ق.ظ";
-        formatInfo.PMDesignator = "ب.ظ";
-        formatInfo.ShortDatePattern = "yyyy/MM/dd";
-        formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
-        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
-        System.Globalization.Calendar cal = new PersianCalendar();
-        FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (fieldInfo != null)
-            fieldInfo.SetValue(culture, cal);
-        FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (info != null)
-            info.SetValue(formatInfo, cal);
-        culture.NumberFormat.NumberDecimalSeparator = "/";
-        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
-        culture.NumberFormat.NumberNegativePattern = 0;
-        return culture;
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true};
+        DialogService.Show<CustomDatePicker>("انتخاب بازه زمانی", options);
     }
-
 }

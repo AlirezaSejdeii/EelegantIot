@@ -1,7 +1,14 @@
 ﻿@inherits LayoutComponentBase
 <MudRTLProvider RightToLeft=true>
     <MudThemeProvider IsDarkMode="false"/>
-    <MudDialogProvider/>
+    <MudDialogProvider
+        FullWidth="true"
+        MaxWidth="MaxWidth.ExtraExtraLarge"
+        CloseButton="true"
+        NoHeader="true"
+        Position="DialogPosition.Center"
+        CloseOnEscapeKey="true"
+    />
     <MudSnackbarProvider/>
 
     <MudLayout>

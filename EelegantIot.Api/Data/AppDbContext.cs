@@ -1,6 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace EelegantIot.Api.Data;
 
-public class AppDbContext
+public class AppDbContext : DbContext
 {
-    
 }

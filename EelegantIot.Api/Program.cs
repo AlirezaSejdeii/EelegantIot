@@ -1,3 +1,5 @@
+using EelegantIot.Api.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,13 +34,15 @@ builder.Services.AddSwaggerGen(c =>
                 Scheme = "oauth2",
                 Name = "Bearer",
                 In = ParameterLocation.Header,
-
             },
             new List<string>()
         }
     });
 });
-
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration["Database:ConnectionString"]!);
+});
 
 
 var app = builder.Build();
@@ -51,5 +55,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+var scope = app.Services.CreateScope();
+AppDbContext appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+appDbContext.Database.EnsureCreated();
 
 app.Run();

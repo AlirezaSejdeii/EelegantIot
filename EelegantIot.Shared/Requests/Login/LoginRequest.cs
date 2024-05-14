@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EelegantIot.Shared.Requests.Login
+﻿namespace EelegantIot.Shared.Requests.Login
 {
     public class LoginRequest
     {

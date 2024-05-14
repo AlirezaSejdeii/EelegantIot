@@ -1,8 +1,8 @@
-using EelegantIot.Api.Entities;
+using EelegantIot.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EelegantIot.Api.Data.Configuration;
+namespace EelegantIot.Api.Infrastructure.Configurations;
 
 public abstract class BaseConfiguration<T> : IEntityTypeConfiguration<T> where T : BaseEntity
 {

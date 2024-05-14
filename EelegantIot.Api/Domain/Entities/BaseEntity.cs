@@ -1,4 +1,4 @@
-namespace EelegantIot.Api.Entities;
+namespace EelegantIot.Api.Domain.Entities;
 
 public abstract class BaseEntity
 {

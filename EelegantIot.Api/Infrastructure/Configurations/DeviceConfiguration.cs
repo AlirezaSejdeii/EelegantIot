@@ -21,6 +21,8 @@ public class DeviceConfiguration : BaseConfiguration<Device>
             .HasColumnName("current");
         builder.Property(x => x.Voltage)
             .HasColumnName("voltage");
+        builder.Property(x => x.IsOn)
+            .HasColumnName("is_on");
 
         builder.Property(x => x.Saturday)
             .HasColumnName("saturday");

@@ -25,6 +25,7 @@ public class Device : BaseEntity
     public double Temperature { get; private set; }
     public double Current { get; private set; }
     public double Voltage { get; private set; }
+    public bool IsOn { get; set; }
 
     public bool Saturday { get; private set; }
     public bool Sunday { get; private set; }

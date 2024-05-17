@@ -22,21 +22,6 @@ namespace EelegantIot.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DeviceUser", b =>
-                {
-                    b.Property<Guid>("DevicesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("DevicesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("DeviceUser");
-                });
-
             modelBuilder.Entity("EelegantIot.Api.Domain.Entities.Device", b =>
                 {
                     b.Property<Guid>("Id")
@@ -149,19 +134,53 @@ namespace EelegantIot.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DeviceUser", b =>
+            modelBuilder.Entity("EelegantIot.Api.Domain.Entities.UserDevices", b =>
                 {
-                    b.HasOne("EelegantIot.Api.Domain.Entities.Device", null)
-                        .WithMany()
-                        .HasForeignKey("DevicesId")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("UserId", "DeviceId");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("UserDevices");
+                });
+
+            modelBuilder.Entity("EelegantIot.Api.Domain.Entities.UserDevices", b =>
+                {
+                    b.HasOne("EelegantIot.Api.Domain.Entities.Device", "Device")
+                        .WithMany("DeviceUsers")
+                        .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EelegantIot.Api.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
+                    b.HasOne("EelegantIot.Api.Domain.Entities.User", "User")
+                        .WithMany("UserDevices")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("EelegantIot.Api.Domain.Entities.Device", b =>
+                {
+                    b.Navigation("DeviceUsers");
+                });
+
+            modelBuilder.Entity("EelegantIot.Api.Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserDevices");
                 });
 #pragma warning restore 612, 618
         }

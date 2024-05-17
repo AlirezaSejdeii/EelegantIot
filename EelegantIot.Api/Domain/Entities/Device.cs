@@ -34,5 +34,5 @@ public class Device : BaseEntity
     public bool Wednesday { get; private set; }
     public bool Thursday { get; private set; }
     public bool Friday { get; private set; }
-    public List<User> Users { get; set; }
+    public List<UserDevices> DeviceUsers { get; set; }
 }

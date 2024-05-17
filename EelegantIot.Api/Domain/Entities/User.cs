@@ -16,5 +16,5 @@ public class User : BaseEntity
 
     public string Username { get; private set; }
     public string Password { get; private set; }
-    public List<Device> Devices { get; set; }
+    public List<UserDevices> UserDevices { get; set; }
 }

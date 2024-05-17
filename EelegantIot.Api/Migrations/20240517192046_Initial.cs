@@ -22,6 +22,7 @@ namespace EelegantIot.Api.Migrations
                     temperature = table.Column<double>(type: "float", nullable: false),
                     current = table.Column<double>(type: "float", nullable: false),
                     voltage = table.Column<double>(type: "float", nullable: false),
+                    is_on = table.Column<bool>(type: "bit", nullable: false),
                     saturday = table.Column<bool>(type: "bit", nullable: false),
                     sunday = table.Column<bool>(type: "bit", nullable: false),
                     monday = table.Column<bool>(type: "bit", nullable: false),
@@ -53,40 +54,41 @@ namespace EelegantIot.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeviceUser",
+                name: "UserDevices",
                 columns: table => new
                 {
-                    DevicesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsersId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DeviceUser", x => new { x.DevicesId, x.UsersId });
+                    table.PrimaryKey("PK_UserDevices", x => new { x.UserId, x.DeviceId });
                     table.ForeignKey(
-                        name: "FK_DeviceUser_Devices_DevicesId",
-                        column: x => x.DevicesId,
+                        name: "FK_UserDevices_Devices_DeviceId",
+                        column: x => x.DeviceId,
                         principalTable: "Devices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DeviceUser_Users_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_UserDevices_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceUser_UsersId",
-                table: "DeviceUser",
-                column: "UsersId");
+                name: "IX_UserDevices_DeviceId",
+                table: "UserDevices",
+                column: "DeviceId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DeviceUser");
+                name: "UserDevices");
 
             migrationBuilder.DropTable(
                 name: "Devices");

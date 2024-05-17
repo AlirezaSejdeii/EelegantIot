@@ -14,7 +14,6 @@ public class UserConfiguration:BaseConfiguration<User>
         builder.Property(x => x.Password)
             .HasColumnName("password")
             .HasMaxLength(64);
-        builder.HasMany(x => x.Devices)
-            .WithMany(x => x.Users);
+        
     }
 }

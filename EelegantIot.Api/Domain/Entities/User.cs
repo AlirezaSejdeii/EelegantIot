@@ -2,11 +2,12 @@ namespace EelegantIot.Api.Domain.Entities;
 
 public class User : BaseEntity
 {
-    public User(Guid id,string username, string password)
+    public User(Guid id,string username, string password,DateTime createdAt)
     {
         Id = id;
         Username = username;
         Password = password;
+        CreatedAt = createdAt;
     }
 
     protected User()

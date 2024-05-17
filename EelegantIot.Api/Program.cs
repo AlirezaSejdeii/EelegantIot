@@ -1,4 +1,6 @@
 using EelegantIot.Api.Infrastructure;
+using EelegantIot.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -44,6 +46,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration["Database:ConnectionString"]!);
 });
 
+builder.Services.Configure<JwtConfigDto>(builder.Configuration.GetSection("JwtConfig"));
 
 var app = builder.Build();
 

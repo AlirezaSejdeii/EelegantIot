@@ -4,7 +4,7 @@ namespace EelegantIot.Api.Domain.Entities;
 
 public class Device : BaseEntity
 {
-    public Device(Guid id, string identifier)
+    public Device(Guid id, string identifier, DateTime createdAt)
     {
         Id = id;
         Identifier = identifier;
@@ -13,6 +13,7 @@ public class Device : BaseEntity
         Current = 0;
         Voltage = 0;
         SettingMode = SettingMode.Manual;
+        CreatedAt = createdAt;
     }
 
     protected Device()

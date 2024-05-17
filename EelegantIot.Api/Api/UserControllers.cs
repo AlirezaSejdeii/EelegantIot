@@ -15,7 +15,7 @@ namespace EelegantIot.Api.Api;
 [Route("users")]
 public class UserControllers(AppDbContext dbContext, IOptions<JwtConfigDto> jwtOptions) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login(LoginRequest loginRequest)
     {
         if (dbContext.Users.FirstOrDefault(x => x.Username == loginRequest.Username) is { } user)

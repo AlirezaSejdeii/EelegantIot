@@ -1,3 +1,4 @@
+using EelegantIot.Api.Extension;
 using EelegantIot.Api.Infrastructure;
 using EelegantIot.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,7 +48,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.Configure<JwtConfigDto>(builder.Configuration.GetSection("JwtConfig"));
-
+builder.Services.AddCustomAuthentication(
+    builder.Configuration["JwtConfig:Secret"]!,
+    builder.Configuration["JwtConfig:EncryptionKey"]!);
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

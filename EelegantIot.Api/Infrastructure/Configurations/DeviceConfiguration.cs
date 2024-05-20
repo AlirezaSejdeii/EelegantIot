@@ -8,6 +8,7 @@ public class DeviceConfiguration : BaseConfiguration<Device>
 {
     protected override void ExtraConfigure(EntityTypeBuilder<Device> builder)
     {
+        builder.ToTable("device");
         builder.Property(x => x.SettingMode)
             .HasColumnName("setting_mode");
         builder.Property(x => x.Identifier)

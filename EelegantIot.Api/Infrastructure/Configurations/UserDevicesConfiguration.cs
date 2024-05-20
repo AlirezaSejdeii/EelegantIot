@@ -8,6 +8,7 @@ public class UserDevicesConfiguration : IEntityTypeConfiguration<UserDevices>
 {
     public void Configure(EntityTypeBuilder<UserDevices> builder)
     {
+        builder.ToTable("user_devices");
         builder.HasKey(ud => new { ud.UserId, ud.DeviceId });
 
         // Configuring relationships

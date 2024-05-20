@@ -27,9 +27,34 @@ public class DeviceManagerController : ControllerBase
         if (device is null)
         {
             _logger.LogInformation("Device were not found");
-            return NotFound("Device Id is null");
+            return NotFound("Device could not be found");
         }
 
         return Ok(new GetRelyStatus(device.IsOn));
+    }
+
+    [HttpPut("update-values/{id:guid}")]
+    public async Task<IActionResult> UpdateValues(Guid id, UpdateDeviceValues values)
+    {
+        _logger.LogInformation("Fetching device");
+        Device? device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == id);
+        if (device is null)
+        {
+            _logger.LogInformation("Device were not found");
+            return NotFound("Device could not be found");
+        }
+
+        DeviceLog log = new DeviceLog(
+            new Guid(),
+            values.Humidity,
+            values.Temperature,
+            values.Current,
+            values.Voltage,
+            device,
+            DateTime.Now);
+
+        device.UpdateFromLastLog(log, DateTime.Now);
+        await _dbContext.SaveChangesAsync();
+        return Ok();
     }
 }

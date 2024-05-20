@@ -37,4 +37,14 @@ public class Device : BaseEntity
     public bool Friday { get; private set; }
     public List<UserDevices> DeviceUsers { get; set; }
     public List<DeviceLog> Logs { get; set; }
+
+    public void UpdateFromLastLog(DeviceLog log, DateTime now)
+    {
+        Logs.Add(log);
+        Humidity = log.Humidity;
+        Temperature = log.Temperature;
+        Current = log.Current;
+        Voltage = log.Voltage;
+        UpdatedAt = now;
+    }
 }

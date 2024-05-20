@@ -14,10 +14,6 @@ ZMPT101B voltageSensor(A0, 50.0);
 
 const char* ssid = "MobinNet_2472";
 const char* password = "8311100@alireza!";
-
-// const char* serverUrl = "https://akushide.ir/IoT-Project/Device/api.php"; // For reading / Changing Status
-// const char* dataServerUrl = "https://akushide.ir/IoT-Project/app/v1/api.php"; // Updated URL for the second API
-
 const char* serverUrl = "https://192.168.1.100:7245";
 const char* identifier = "iot-device-0001";
 
@@ -25,7 +21,6 @@ const int relayPin = D0;  // Pin connected to relay
 const int dhtPin = D2;    // Pin connected to DHT11 module
 const int analogPin = A0;
 int Volt_Amper_Switch = D3;  // MUX
-
 
 
 DHT dht(dhtPin, DHTTYPE);
@@ -124,11 +119,10 @@ void loop() {
     if (httpCode > 0) {
       String payload = http.getString();
       Serial.println(payload);
+      DynamicJsonDocument docToReadData(1024);  // Create a JSON document object
+      deserializeJson(docToReadData, payload);
 
-      DynamicJsonDocument doc(1024);  // Create a JSON document object
-      deserializeJson(doc, payload);
-
-      if (doc["on"]) {                 // Check the value of "Device" field
+      if (docToReadData["on"]) {                 // Check the value of "Device" field
         digitalWrite(relayPin, HIGH);  // Turn on the relay
         Serial.println("Relay turned on");
       } else {
@@ -157,29 +151,33 @@ void loop() {
 
     Volt_Amper_Switch = 1;  ////pin11=1 ==> pin14->out
     double current = Current_Function();
-
+    Serial.println("current:" + String(current));
+    Serial.println("voltage:" + String(voltage));
     // Send temperature and humidity to the second API
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
 
     if (isnan(temperature) || isnan(humidity)) {
+
       Serial.println("Failed to read from DHT sensor");
+      if (isnan(temperature)) {
+        temperature = 0.00;
+      }
+
+      if (isnan(humidity)) {
+        humidity = 0.00;
+      }
     }
 
-    if (isnan(temperature)) {
-      temperature = 0.0;
-    }
-    if (isnan(humidity)) {
-      humidity = 0.0;
-    }
-    StaticJsonDocument<4> doc;
-    doc["temperature"] = temperature;
-    doc["humidity"] = humidity;
-    doc["current"] = current;
-    doc["voltage"] = voltage;
+
+    StaticJsonDocument<4> docToSendData;
+    docToSendData["temperature"] = temperature;
+    docToSendData["humidity"] = humidity;
+    docToSendData["current"] = current;
+    docToSendData["voltage"] = voltage;
 
     String jsonData;
-    serializeJson(doc, jsonData);
+    serializeJson(docToSendData, jsonData);
     Serial.println(jsonData);
     int dataHttpCode = http.PUT(jsonData);
 

@@ -1,7 +1,7 @@
 using EelegantIot.Api.Extension;
+using EelegantIot.Api.Hubs;
 using EelegantIot.Api.Infrastructure;
 using EelegantIot.Api.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -59,12 +59,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.MapControllers();
 
 var scope = app.Services.CreateScope();
 AppDbContext appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 appDbContext.Database.Migrate();
 appDbContext.Database.EnsureCreated();
-
+app.MapHub<UpdateDeviceHub>("/hub/update-device-notification");
 app.Run();

@@ -26,17 +26,14 @@ public class Device : BaseEntity
     public double Temperature { get; private set; }
     public double Current { get; private set; }
     public double Voltage { get; private set; }
-    public bool IsOn { get; set; }
+    public bool IsOn { get; private set; }
 
-    public bool Saturday { get; private set; }
-    public bool Sunday { get; private set; }
-    public bool Monday { get; private set; }
-    public bool Tuesday { get; private set; }
-    public bool Wednesday { get; private set; }
-    public bool Thursday { get; private set; }
-    public bool Friday { get; private set; }
+    public int[]? DayOfWeeks { get; private set; }
+    public DateOnly StartAt { get; private set; }
+    public DateOnly EndAt { get; private set; }
     public List<UserDevices> DeviceUsers { get; set; }
     public List<DeviceLog> Logs { get; set; }
+
 
     public void UpdateFromLastLog(DeviceLog log, DateTime now)
     {
@@ -47,4 +44,16 @@ public class Device : BaseEntity
         Voltage = log.Voltage;
         UpdatedAt = now;
     }
+
+    public DateOnly? GetTodayStartAt(DateTime now)
+    {
+        DayOfWeek today = now.Date.DayOfWeek;
+        return DayOfWeeks != null && DayOfWeeks.Any(x => x == (int)today) ? StartAt : null;
+    }
+
+    // private int[] AvailableDayOfWeeks()
+    // {
+    //     int[] days;
+    //     
+    // }
 }

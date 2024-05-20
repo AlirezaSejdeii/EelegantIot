@@ -1,3 +1,4 @@
+using System.Text.Json;
 using EelegantIot.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -24,20 +25,15 @@ public class DeviceConfiguration : BaseConfiguration<Device>
             .HasColumnName("voltage");
         builder.Property(x => x.IsOn)
             .HasColumnName("is_on");
+        builder.Property(x => x.StartAt)
+            .HasColumnName("start_at");
+        builder.Property(x => x.EndAt)
+            .HasColumnName("end_at");
 
-        builder.Property(x => x.Saturday)
-            .HasColumnName("saturday");
-        builder.Property(x => x.Sunday)
-            .HasColumnName("sunday");
-        builder.Property(x => x.Monday)
-            .HasColumnName("monday");
-        builder.Property(x => x.Tuesday)
-            .HasColumnName("tuesday");
-        builder.Property(x => x.Wednesday)
-            .HasColumnName("wednesday");
-        builder.Property(x => x.Thursday)
-            .HasColumnName("thursday");
-        builder.Property(x => x.Friday)
-            .HasColumnName("friday");
+        builder.Property(d => d.DayOfWeeks)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
+                v => JsonSerializer.Deserialize<int[]>(v, (JsonSerializerOptions)null!))
+            .HasColumnType("nvarchar(max)");
     }
 }

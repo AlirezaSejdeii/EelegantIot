@@ -7,8 +7,7 @@
         CloseButton="true"
         NoHeader="true"
         Position="DialogPosition.Center"
-        CloseOnEscapeKey="true"
-    />
+        CloseOnEscapeKey="true"/>
     <MudSnackbarProvider/>
 
     <MudLayout>
@@ -22,9 +21,16 @@
             <NavMenu/>
         </MudDrawer>
         <MudMainContent>
-            <MudContainer MaxWidth="MaxWidth.Large">
-                @Body
-            </MudContainer>
+            <AuthorizeView>
+                <Authorized>
+                    <MudContainer MaxWidth="MaxWidth.Large">
+                        @Body
+                    </MudContainer>
+                </Authorized>
+                <NotAuthorized>
+                    <p>لطفا ابتدا ورود کنید</p>
+                </NotAuthorized>
+            </AuthorizeView>
         </MudMainContent>
     </MudLayout>
 </MudRTLProvider>

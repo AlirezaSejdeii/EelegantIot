@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace EelegantIot.Shared
 {
@@ -26,7 +27,12 @@ namespace EelegantIot.Shared
             });
 
             // services
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<AuthenticationStateProvider, UserService>(
+                provider => provider.GetRequiredService<UserService>()
+            );
+            services.AddAuthorizationCore();
+
         }
     }
 }

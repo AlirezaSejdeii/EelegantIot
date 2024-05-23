@@ -1,33 +1,88 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Globalization;
+using System.Net.Http.Json;
+using System.Security.Claims;
+using Blazored.LocalStorage;
+using EelegantIot.Shared.Requests.Login;
+using EelegantIot.Shared.Response;
+using Microsoft.AspNetCore.Components.Authorization;
 
-namespace EelegantIot.Shared.Services
+namespace EelegantIot.Shared.Services;
+
+public class UserService : AuthenticationStateProvider
 {
-    public class UserService : IUserService
+    private const string LoginTokenKeyToken = "LOGIN_TOKEN_KEY_TOKEN";
+    private const string LoginTokenKeyExpireDate = "LOGIN_TOKEN_KEY_EXPIRE_DATE";
+
+    readonly ILocalStorageService _localStorageService;
+
+    public UserService(ILocalStorageService localStorageService)
     {
-        private const string LoginTokenKeyToken = "LOGIN_TOKEN_KEY_TOKEN";
-        private const string LoginTokenKeyExpireDate = "LOGIN_TOKEN_KEY_EXPIRE_DATE";
+        _localStorageService = localStorageService;
+    }
 
-        readonly ILocalStorageService _localStorageService;
+    public async Task<bool> IsLoggedIn()
+    {
+        string? token = await _localStorageService.GetItemAsStringAsync(LoginTokenKeyToken);
+        string? dateTime = await _localStorageService.GetItemAsStringAsync(LoginTokenKeyExpireDate);
 
-        public UserService(ILocalStorageService localStorageService)
+        if (token != null && dateTime != null && DateTime.TryParse(dateTime, out DateTime expireDate))
         {
-            _localStorageService = localStorageService;
+            return expireDate > DateTime.Today;
         }
 
-        public async Task<bool> IsLoggedIn()
+        if (token != null && dateTime != null)
         {
-            string? token = await _localStorageService.GetItemAsStringAsync(LoginTokenKeyToken);
-            return token != null;
+            await _localStorageService.RemoveItemAsync(LoginTokenKeyToken);
+            await _localStorageService.RemoveItemAsync(LoginTokenKeyExpireDate);
         }
 
-        public async Task<string?> LoginOrSignUpUser(string username, string password)
+        return false;
+    }
+
+    public async Task<string?> LoginOrSignUpUser(string username, string password)
+    {
+        HttpClient httpClient = new();
+        HttpResponseMessage responseMessage = await httpClient.PostAsJsonAsync(Config.Api + "/users/login",
+            new LoginRequest { Username = username, Password = password });
+
+        if (!responseMessage.IsSuccessStatusCode)
         {
-            await Task.Delay(1000);
-            if (username == password)
-            {
-                return "نام کاربری و کلمه عبور یکسان است";
-            }
-            return null;
+            return "مشکلی در ارتباط با وب سرور وجود دارد";
         }
+
+        ResponseData<LoginResponse>? result =
+            await responseMessage.Content.ReadFromJsonAsync<ResponseData<LoginResponse>>();
+
+        if (!result.Value.Success)
+        {
+            return result.Value.Error!.ErrorMessage;
+        }
+
+        await _localStorageService.SetItemAsStringAsync(LoginTokenKeyToken, result.Value.Data!.Token);
+        await _localStorageService.SetItemAsStringAsync(LoginTokenKeyExpireDate,
+            result.Value.Data!.ExpireDate.ToString(CultureInfo.InvariantCulture));
+
+        return null;
+    }
+
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        if (await IsLoggedIn())
+        {
+            List<Claim> claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()));
+
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "jwt");
+
+
+            ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            AuthenticationState appState = new AuthenticationState(claimsPrincipal);
+            NotifyAuthenticationStateChanged(Task.FromResult(appState));
+            return appState;
+        }
+
+        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
 }

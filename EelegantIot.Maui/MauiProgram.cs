@@ -1,5 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using EelegantIot.Shared;
+using EelegantIot.Shared.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 
@@ -17,6 +19,8 @@ public static class MauiProgram
         builder.Services.AddDependencies();
         builder.Services.AddMudServices();
         builder.Services.AddMauiBlazorWebView();
+        builder.Services.AddAuthorizationCore();
+        builder.Services.AddCascadingAuthenticationState();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

@@ -26,10 +26,10 @@ public class UserControllers(AppDbContext dbContext, IOptions<JwtConfigDto> jwtO
                 return new ResponseData<LoginResponse>(GenerateToken(user));
             }
 
-            return Ok(new ErrorModel("کاربری با این مشخصات یافت نشد"));
+            return new ResponseData<LoginResponse>(new ErrorModel("کاربری با این مشخصات یافت نشد"));
         }
 
-        user = new(Guid.NewGuid(), loginRequest.Username, loginRequest.Password,DateTime.Now);
+        user = new(Guid.NewGuid(), loginRequest.Username, loginRequest.Password, DateTime.Now);
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
         return new ResponseData<LoginResponse>(GenerateToken(user));

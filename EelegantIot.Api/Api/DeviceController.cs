@@ -4,6 +4,7 @@ using EelegantIot.Api.Models;
 using EelegantIot.Shared.Requests.DeviceDetails;
 using EelegantIot.Shared.Requests.DeviceList;
 using EelegantIot.Shared.Requests.NewDevice;
+using EelegantIot.Shared.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         {
             if (device.DeviceUsers.Any(x => x.UserId == userId))
             {
-                return Ok(new ErrorModel("کاربر قبلا دستگاه را ثبت کرده است"));
+                return Ok(new ResponseData<NoContent>(new ErrorModel("کاربر قبلا دستگاه را ثبت کرده است")));
             }
 
             device.DeviceUsers.Add(new UserDevices(user, device, newDeviceRequest.Name));
@@ -42,7 +43,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<List<DeviceItemDto>>> GetDeviceList()
+    public async Task<ActionResult<ResponseData<List<DeviceItemDto>>>> GetDeviceList()
     {
         Guid userId = Guid.Parse(User.Identity!.Name!);
         IQueryable<Device> devices =
@@ -54,7 +55,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
                 x.Identifier,
                 x.GetTodayStartAt(DateTime.Now)))
             .ToListAsync();
-        return deviceList;
+        return new ResponseData<List<DeviceItemDto>>(deviceList);
     }
 
     [HttpGet("details/{id:guid}")]
@@ -75,7 +76,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
             .FirstOrDefaultAsync();
         if (device is null)
         {
-            return Ok(new ErrorModel("دستگاه یافت نشد"));
+            return Ok(new ResponseData<DeviceDetailsDto>(new ErrorModel("دستگاه یافت نشد")));
         }
 
         return device;
@@ -93,6 +94,6 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         }
 
         device.DeviceUsers.Remove(device.DeviceUsers.First(x => x.UserId == userId));
-        return Ok();
+        return NoContent();
     }
 }

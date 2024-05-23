@@ -1,3 +1,3 @@
-namespace EelegantIot.Api.Models;
+namespace EelegantIot.Shared.Response;
 
 public record ErrorModel(string ErrorMessage);

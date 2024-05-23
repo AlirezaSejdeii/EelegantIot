@@ -5,6 +5,7 @@ using EelegantIot.Api.Domain.Entities;
 using EelegantIot.Api.Infrastructure;
 using EelegantIot.Api.Models;
 using EelegantIot.Shared.Requests.Login;
+using EelegantIot.Shared.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,13 +17,13 @@ namespace EelegantIot.Api.Api;
 public class UserControllers(AppDbContext dbContext, IOptions<JwtConfigDto> jwtOptions) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponse>> Login(LoginRequest loginRequest)
+    public async Task<ActionResult<ResponseData<LoginResponse>>> Login(LoginRequest loginRequest)
     {
         if (dbContext.Users.FirstOrDefault(x => x.Username == loginRequest.Username) is { } user)
         {
             if (user.Password == loginRequest.Password)
             {
-                return GenerateToken(user);
+                return new ResponseData<LoginResponse>(GenerateToken(user));
             }
 
             return Ok(new ErrorModel("کاربری با این مشخصات یافت نشد"));
@@ -31,7 +32,7 @@ public class UserControllers(AppDbContext dbContext, IOptions<JwtConfigDto> jwtO
         user = new(Guid.NewGuid(), loginRequest.Username, loginRequest.Password,DateTime.Now);
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-        return GenerateToken(user);
+        return new ResponseData<LoginResponse>(GenerateToken(user));
     }
 
     private LoginResponse GenerateToken(User user)

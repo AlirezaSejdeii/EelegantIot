@@ -51,6 +51,7 @@ builder.Services.Configure<JwtConfigDto>(builder.Configuration.GetSection("JwtCo
 builder.Services.AddCustomAuthentication(
     builder.Configuration["JwtConfig:Secret"]!,
     builder.Configuration["JwtConfig:EncryptionKey"]!);
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

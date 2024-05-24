@@ -19,9 +19,6 @@ public static class MauiProgram
         builder.Services.AddDependencies();
         builder.Services.AddMudServices();
         builder.Services.AddMauiBlazorWebView();
-        builder.Services.AddAuthorizationCore();
-        builder.Services.AddCascadingAuthenticationState();
-
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();

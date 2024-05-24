@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Blazored.LocalStorage;
 using EelegantIot.Shared.Requests.Login;
 using EelegantIot.Shared.Response;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace EelegantIot.Shared.Services;
@@ -14,10 +15,12 @@ public class UserService : AuthenticationStateProvider
     private const string LoginTokenKeyExpireDate = "LOGIN_TOKEN_KEY_EXPIRE_DATE";
 
     readonly ILocalStorageService _localStorageService;
+    private readonly NavigationManager _navigationManager;
 
-    public UserService(ILocalStorageService localStorageService)
+    public UserService(ILocalStorageService localStorageService, NavigationManager navigationManager)
     {
         _localStorageService = localStorageService;
+        _navigationManager = navigationManager;
     }
 
     public async Task<bool> IsLoggedIn()
@@ -61,8 +64,15 @@ public class UserService : AuthenticationStateProvider
         await _localStorageService.SetItemAsStringAsync(LoginTokenKeyToken, result.Value.Data!.Token);
         await _localStorageService.SetItemAsStringAsync(LoginTokenKeyExpireDate,
             result.Value.Data!.ExpireDate.ToString(CultureInfo.InvariantCulture));
-
+        await GetAuthenticationStateAsync();
         return null;
+    }
+
+    public async Task LogOut()
+    {
+        await _localStorageService.RemoveItemAsync(LoginTokenKeyToken);
+        await _localStorageService.RemoveItemAsync(LoginTokenKeyExpireDate);
+        await GetAuthenticationStateAsync();
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -82,6 +92,7 @@ public class UserService : AuthenticationStateProvider
             NotifyAuthenticationStateChanged(Task.FromResult(appState));
             return appState;
         }
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
 
         return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }

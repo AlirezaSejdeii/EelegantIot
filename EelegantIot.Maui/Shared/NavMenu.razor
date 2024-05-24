@@ -1,3 +1,15 @@
 ﻿<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">ورود</MudNavLink>
+    <MudNavLink Href="/add-device" Match="NavLinkMatch.All">افزودن دستگاه</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="/LogOut" Match="NavLinkMatch.All">خروج</MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="/login" Match="NavLinkMatch.All">ورود</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudNavMenu>
+
+@code
+{
+}

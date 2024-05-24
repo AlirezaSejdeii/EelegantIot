@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/login"
 <PageTitle>ورود به حساب کاربری</PageTitle>
 <MudPaper Class="d-flex flex-column m-5 justify-content-center align-content-end">
     <MudItem>
@@ -29,6 +29,14 @@
     [Inject] public NavigationManager NavigationManager { get; set; }
     public bool IsLoading { get; set; }
     LoginRequest _request = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await UserService.IsLoggedIn())
+        {
+            NavigationManager.NavigateTo("/devices");
+        }
+    }
 
     public async Task LoginOrCreateAccount()
     {

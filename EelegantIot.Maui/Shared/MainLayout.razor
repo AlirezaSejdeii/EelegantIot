@@ -13,24 +13,17 @@
     <MudLayout>
         <MudAppBar>
             <MudGrid Justify="Justify.SpaceBetween" Spacing="50">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
-                <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenNewDevice())"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => OpenMenu())"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => BackHome())"/>
             </MudGrid>
         </MudAppBar>
         <MudDrawer @bind-Open="@_drawerOpen">
             <NavMenu/>
         </MudDrawer>
         <MudMainContent>
-            <AuthorizeView>
-                <Authorized>
-                    <MudContainer MaxWidth="MaxWidth.Large">
-                        @Body
-                    </MudContainer>
-                </Authorized>
-                <NotAuthorized>
-                    <p>لطفا ابتدا ورود کنید</p>
-                </NotAuthorized>
-            </AuthorizeView>
+            <MudContainer MaxWidth="MaxWidth.Large">
+                @Body
+            </MudContainer>
         </MudMainContent>
     </MudLayout>
 </MudRTLProvider>
@@ -39,15 +32,16 @@
     bool _drawerOpen;
 
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public UserService UserService { get; set; }
 
-    void DrawerToggle()
+    void BackHome()
     {
-        _drawerOpen = !_drawerOpen;
+        NavigationManager.NavigateTo("/");
     }
 
-    void OpenNewDevice()
+    void OpenMenu()
     {
-        NavigationManager.NavigateTo("add-device");
+        _drawerOpen = !_drawerOpen;
     }
 
 }

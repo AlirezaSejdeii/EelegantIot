@@ -28,6 +28,7 @@ namespace EelegantIot.Shared
 
             // services
             services.AddScoped<UserService>();
+            services.AddTransient<DeviceService>();
             services.AddScoped<AuthenticationStateProvider, UserService>(
                 provider => provider.GetRequiredService<UserService>()
             );

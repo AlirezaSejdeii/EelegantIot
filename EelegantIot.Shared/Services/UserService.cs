@@ -94,4 +94,10 @@ public class UserService : AuthenticationStateProvider
 
         return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
+
+    public async Task<string> GetLoginToken()
+    {
+        string? token = await _localStorageService.GetItemAsStringAsync(LoginTokenKeyToken);
+        return token!;
+    }
 }

@@ -22,14 +22,21 @@
 </MudPaper>
 
 @code {
+    bool _loading;
     NewDeviceRequest _request = new();
     public bool IsLoading { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public DeviceService DeviceService { get; set; }
 
     public async Task CreateDevice()
     {
-        NavigationManager.NavigateTo("devices");
-        await Task.Delay(500);
+        _loading = true;
+        ResponseData<NoContent> result= await DeviceService.AddNewDevice(_request);
+        if (result.Success)
+        {
+            
+        }
+        _loading = false;
     }
 
 }

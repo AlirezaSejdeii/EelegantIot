@@ -48,7 +48,11 @@ public class Device : BaseEntity
     public TimeOnly? GetTodayStartAt(DateTime now)
     {
         DayOfWeek today = now.Date.DayOfWeek;
-        return DayOfWeeks != null && DayOfWeeks.Any(x => x == (int)today) ? StartAt : null;
+        if (DayOfWeeks != null && DayOfWeeks.Any(x => x == (int)today))
+        {
+            return IsOn ? EndAt : StartAt;
+        }
+        return null;
     }
     
     public void ArrangeStatus(DateTime now)

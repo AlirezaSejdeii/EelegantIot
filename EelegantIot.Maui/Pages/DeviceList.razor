@@ -1,10 +1,38 @@
 ﻿@page "/devices"
+@using EelegantIot.Shared.Requests.DeviceList
 @attribute [Authorize]
 
-<DeviceCard></DeviceCard>
-<DeviceCard></DeviceCard>
-<DeviceCard></DeviceCard>
-<DeviceCard></DeviceCard>
+@if (!loading)
+{
+    @foreach (DeviceItemDto item in list)
+    {
+        <DeviceCard ItemDto="item"></DeviceCard>
+    }
+}
+else
+{
+    <MudSkeleton Animation="Animation.Wave" SkeletonType="SkeletonType.Rectangle" Height="120px" Class="mt-6"/>
+    <MudSkeleton Animation="Animation.Wave" SkeletonType="SkeletonType.Rectangle" Height="120px" Class="mt-6"/>
+}
+
 @code {
+    [Inject] public DeviceService DeviceService { get; set; }
+    [Inject] public ISnackbar SnackbarService { get; set; }
+    List<DeviceItemDto> list = new();
+    bool loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        ResponseData<List<DeviceItemDto>> listResult = await DeviceService.GetDeviceList();
+        if (listResult is { Success: false, Error: not null })
+        {
+            SnackbarService.Add(listResult.Error.ErrorMessage, Severity.Error);
+            return;
+        }
+
+        list = listResult.Data!;
+        loading = false;
+    }
 
 }

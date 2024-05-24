@@ -29,8 +29,8 @@ public class Device : BaseEntity
     public bool IsOn { get; private set; }
 
     public int[]? DayOfWeeks { get; private set; }
-    public DateOnly StartAt { get; private set; }
-    public DateOnly EndAt { get; private set; }
+    public TimeOnly StartAt { get; private set; }
+    public TimeOnly EndAt { get; private set; }
     public List<UserDevices> DeviceUsers { get; set; }
     public List<DeviceLog> Logs { get; set; }
 
@@ -45,15 +45,33 @@ public class Device : BaseEntity
         UpdatedAt = now;
     }
 
-    public DateOnly? GetTodayStartAt(DateTime now)
+    public TimeOnly? GetTodayStartAt(DateTime now)
     {
         DayOfWeek today = now.Date.DayOfWeek;
         return DayOfWeeks != null && DayOfWeeks.Any(x => x == (int)today) ? StartAt : null;
     }
+    
+    public void ArrangeStatus(DateTime now)
+    {
+        if (
+            SettingMode is SettingMode.Timer && 
+            DayOfWeeks != null &&
+            DayOfWeeks.Any(x => (DayOfWeek)x == now.DayOfWeek))
+        {
+            TimeSpan start = StartAt.ToTimeSpan();
+            TimeSpan end = EndAt.ToTimeSpan();
+            TimeSpan currentTime = now.TimeOfDay;
 
-    // private int[] AvailableDayOfWeeks()
-    // {
-    //     int[] days;
-    //     
-    // }
+            if (
+                (end < start && (currentTime >= start || currentTime <= end)) ||
+                (currentTime >= start && currentTime <= end))
+            {
+                IsOn = true;
+            }
+            else
+            {
+                IsOn = false;
+            }
+        }
+    }
 }

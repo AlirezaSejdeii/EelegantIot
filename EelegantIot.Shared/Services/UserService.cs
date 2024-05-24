@@ -15,12 +15,10 @@ public class UserService : AuthenticationStateProvider
     private const string LoginTokenKeyExpireDate = "LOGIN_TOKEN_KEY_EXPIRE_DATE";
 
     readonly ILocalStorageService _localStorageService;
-    private readonly NavigationManager _navigationManager;
 
-    public UserService(ILocalStorageService localStorageService, NavigationManager navigationManager)
+    public UserService(ILocalStorageService localStorageService)
     {
         _localStorageService = localStorageService;
-        _navigationManager = navigationManager;
     }
 
     public async Task<bool> IsLoggedIn()

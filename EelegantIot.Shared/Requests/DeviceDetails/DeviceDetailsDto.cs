@@ -6,6 +6,6 @@ public record DeviceDetailsDto(
     double Temperature,
     double Humidity,
     SettingMode SettingMode,
-    DateOnly StartAt,
-    DateOnly EndAt,
+    TimeOnly StartAt,
+    TimeOnly EndAt,
     int[]? WorkingDays);

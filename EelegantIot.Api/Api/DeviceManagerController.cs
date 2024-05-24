@@ -62,6 +62,7 @@ public class DeviceManagerController : ControllerBase
             DateTime.Now);
 
         device.UpdateFromLastLog(log, DateTime.Now);
+        device.ArrangeStatus(DateTime.Now);
         await _dbContext.SaveChangesAsync();
         await _notificationService.DeviceUpdated(device);
         return Ok();

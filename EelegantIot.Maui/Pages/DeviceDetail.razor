@@ -1,83 +1,110 @@
-@page "/device-detail"
+@page "/device-detail/{Id:guid}"
+@using EelegantIot.Shared.Requests.DeviceDetails
 @attribute [Authorize]
-<MudCard Class="mt-3" Outlined="true">
-    <MudCardHeader>
-        <MudText Typo="Typo.h6">دما و جریان</MudText>
-    </MudCardHeader>
-    <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
-    <MudCardContent>
-        <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
-            <MudText Typo="Typo.h6">دما</MudText>
-            <MudText Typo="Typo.h6">26</MudText>
-        </MudStack>
-        <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
-            <MudText Typo="Typo.h6">جریان</MudText>
-            <MudText Typo="Typo.h6">3</MudText>
-        </MudStack>
-    </MudCardContent>
-</MudCard>
 
-<MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" Class="mt-3">خاموش کن</MudButton>
+@if (!_loading)
+{
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">دما و رطوبت</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">دما</MudText>
+                <MudText Typo="Typo.h6">@_item.Temperature</MudText>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">رطوبت</MudText>
+                <MudText Typo="Typo.h6">@_item.Humidity</MudText>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
 
-<MudCard Class="mt-3" Outlined="true">
-    <MudCardHeader>
-        <MudText Typo="Typo.h6">دما و جریان</MudText>
-    </MudCardHeader>
-    <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
-    <MudCardContent>
-        <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
-            <MudText Typo="Typo.h6">تایمر</MudText>
-            <MudSwitch Color="Color.Primary" Value="true"></MudSwitch>
-        </MudStack>
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">جریان و ولتاژ</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">جریان</MudText>
+                <MudText Typo="Typo.h6">@_item.Current</MudText>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">ولتاژ</MudText>
+                <MudText Typo="Typo.h6">@_item.Voltage</MudText>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+    <MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" Class="mt-3">خاموش کن</MudButton>
 
-        <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
-            <MudText Typo="Typo.h6">زمان شروع</MudText>
-            <MudTimePicker></MudTimePicker>
-        </MudStack>
-        <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
-            <MudText Typo="Typo.h6">زمان پایان</MudText>
-            <MudTimePicker></MudTimePicker>
-        </MudStack>
-        <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2 m-2">
-            <MudText Typo="Typo.h6">تکرار</MudText>
-            <MudGrid Justify="Justify.Center">
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => saturdaySelected = !saturdaySelected)" Color="saturdaySelected ? Color.Primary : Color.Dark">شنبه</MudButton>
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => sundaySelected = !sundaySelected)" Color="sundaySelected ? Color.Primary : Color.Dark">یکشنبه</MudButton>
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => mondaySelected = !mondaySelected)" Color="mondaySelected ? Color.Primary : Color.Dark">دوشنبه</MudButton>
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => tuesdaySelected = !tuesdaySelected)" Color="tuesdaySelected ? Color.Primary : Color.Dark">سه شنبه</MudButton>
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => wednesdaySelected = !wednesdaySelected)" Color="wednesdaySelected ? Color.Primary : Color.Dark">چهار شنبه</MudButton>
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => thursdaySelected = !thursdaySelected)" Color="thursdaySelected ? Color.Primary : Color.Dark">پنج شنبه</MudButton>
-                <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => fridaySelected = !fridaySelected)" Color="fridaySelected ? Color.Primary : Color.Dark">جمعه</MudButton>
-            </MudGrid>
-        </MudStack>
-    </MudCardContent>
-</MudCard>
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">تنظیمات تایمر</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">تایمر</MudText>
+                <MudSwitch Color="Color.Primary" Value="@isTimerOn"></MudSwitch>
+            </MudStack>
 
-<MudCard Class="mt-3" Outlined="true">
-    <MudCardHeader>
-        <MudText Typo="Typo.h6">نمودار دما</MudText>
-    </MudCardHeader>
-    <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
-    <MudCardContent>
-        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
-    </MudCardContent>
-    <MudCardActions>
-        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
-    </MudCardActions>
-</MudCard>
-<MudCard Class="mt-3" Outlined="true">
-    <MudCardHeader>
-        <MudText Typo="Typo.h6">نمودار جریان</MudText>
-    </MudCardHeader>
-    <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
-    <MudCardContent>
-        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
-    </MudCardContent>
-    <MudCardActions>
-        <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
-    </MudCardActions>
-</MudCard>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">زمان شروع</MudText>
+                <MudTimePicker @bind-Time="startAt" AmPm="false"></MudTimePicker>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                <MudText Typo="Typo.h6">زمان پایان</MudText>
+                <MudTimePicker @bind-Time="endAt" AmPm="false"></MudTimePicker>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2 m-2">
+                <MudText Typo="Typo.h6">تکرار</MudText>
+                <MudGrid Justify="Justify.Center">
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => saturdaySelected = !saturdaySelected)" Color="saturdaySelected ? Color.Primary : Color.Dark">شنبه</MudButton>
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => sundaySelected = !sundaySelected)" Color="sundaySelected ? Color.Primary : Color.Dark">یکشنبه</MudButton>
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => mondaySelected = !mondaySelected)" Color="mondaySelected ? Color.Primary : Color.Dark">دوشنبه</MudButton>
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => tuesdaySelected = !tuesdaySelected)" Color="tuesdaySelected ? Color.Primary : Color.Dark">سه شنبه</MudButton>
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => wednesdaySelected = !wednesdaySelected)" Color="wednesdaySelected ? Color.Primary : Color.Dark">چهار شنبه</MudButton>
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => thursdaySelected = !thursdaySelected)" Color="thursdaySelected ? Color.Primary : Color.Dark">پنج شنبه</MudButton>
+                    <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => fridaySelected = !fridaySelected)" Color="fridaySelected ? Color.Primary : Color.Dark">جمعه</MudButton>
+                </MudGrid>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
 
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">نمودار دما</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
+        </MudCardActions>
+    </MudCard>
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">نمودار جریان</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
+        </MudCardActions>
+    </MudCard>
+    
+    <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Delete" Class="mt-3 mb-3" Color="Color.Error" Variant="Variant.Filled">حذف دستگاه</MudButton>
+}
+else
+{
+    <MudSkeleton Animation="Animation.Pulse" SkeletonType="SkeletonType.Rectangle" Height="220px" Class="mt-6"/>
+    <MudSkeleton Animation="Animation.Pulse" SkeletonType="SkeletonType.Rectangle" Height="220px" Class="mt-6"/>
+}
 
 @code {
     bool saturdaySelected;
@@ -88,17 +115,55 @@
     bool thursdaySelected;
     bool fridaySelected;
 
+    bool isTimerOn;
+    bool _loading;
+
+    TimeSpan? startAt;
+    TimeSpan? endAt;
     [Inject] public IDialogService DialogService { get; set; }
+    [Inject] public DeviceService DeviceService { get; set; }
+    [Inject] public ISnackbar SnackbarService { get; set; }
+    [Parameter] public Guid Id { get; set; }
+    DeviceDetailsDto _item;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        Console.WriteLine("test");
+        ResponseData<DeviceDetailsDto> result = await DeviceService.GetDeviceById(Id);
+        if (!result.Success)
+        {
+            SnackbarService.Add(result.Error!.ErrorMessage, Severity.Error);
+        }
+
+        _item = result.Data!;
+
+        if (_item.WorkingDays != null)
+        {
+            saturdaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Saturday);
+            sundaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Sunday);
+            mondaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Monday);
+            tuesdaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Tuesday);
+            wednesdaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Wednesday);
+            thursdaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Thursday);
+            fridaySelected = _item.WorkingDays.Any(x => x == (int)DayOfWeek.Friday);
+        }
+
+        isTimerOn = _item.SettingMode == SettingMode.Timer;
+        startAt = _item.StartAt.ToTimeSpan();
+        endAt = _item.EndAt.ToTimeSpan();
+        _loading = false;
+    }
 
     public void OpenChartDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true};
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
         DialogService.Show<Chart>("نمایش چارت", options);
     }
-    
+
     public void OpenDatePickerDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true};
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
         DialogService.Show<CustomDatePicker>("انتخاب بازه زمانی", options);
     }
 }

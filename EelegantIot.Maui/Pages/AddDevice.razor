@@ -26,6 +26,8 @@
     NewDeviceRequest _request = new();
     public bool IsLoading { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public ISnackbar SnackbarService { get; set; }
+    
     [Inject] public DeviceService DeviceService { get; set; }
 
     public async Task CreateDevice()
@@ -34,7 +36,11 @@
         ResponseData<NoContent> result= await DeviceService.AddNewDevice(_request);
         if (result.Success)
         {
-            
+            NavigationManager.NavigateTo("devices");
+        }
+        else
+        {
+            SnackbarService.Add(result.Error!.ErrorMessage, Severity.Error);
         }
         _loading = false;
     }

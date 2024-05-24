@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using EelegantIot.Shared.Requests.DeviceDetails;
 using EelegantIot.Shared.Requests.DeviceList;
 using EelegantIot.Shared.Requests.NewDevice;
 using EelegantIot.Shared.Response;
@@ -51,6 +52,26 @@ public class DeviceService : IDeviceService
 
         ResponseData<NoContent> result =
             await responseMessage.Content.ReadFromJsonAsync<ResponseData<NoContent>>();
+
+        return result;
+    }
+    
+    public async Task<ResponseData<DeviceDetailsDto>> GetDeviceById(Guid id)
+    {
+        string token = await _userService.GetLoginToken();
+        HttpClient httpClient = new()
+        {
+            DefaultRequestHeaders = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
+        };
+        HttpResponseMessage responseMessage = await httpClient.GetAsync(Config.Api + $"/devices/details/{id}");
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            return new ResponseData<DeviceDetailsDto>(new ErrorModel("مشکلی در ارتباط با سرور وجود دارد"));
+        }
+
+        ResponseData<DeviceDetailsDto> result =
+            await responseMessage.Content.ReadFromJsonAsync<ResponseData<DeviceDetailsDto>>();
 
         return result;
     }

@@ -48,17 +48,18 @@ public class Device : BaseEntity
     public TimeOnly? GetTodayStartAt(DateTime now)
     {
         DayOfWeek today = now.Date.DayOfWeek;
-        if (DayOfWeeks != null && DayOfWeeks.Any(x => x == (int)today))
+        if (DayOfWeeks != null && DayOfWeeks.Any(x => x == (int)today) && SettingMode is SettingMode.Timer)
         {
             return IsOn ? EndAt : StartAt;
         }
+
         return null;
     }
-    
+
     public void ArrangeStatus(DateTime now)
     {
         if (
-            SettingMode is SettingMode.Timer && 
+            SettingMode is SettingMode.Timer &&
             DayOfWeeks != null &&
             DayOfWeeks.Any(x => (DayOfWeek)x == now.DayOfWeek))
         {

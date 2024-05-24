@@ -1,6 +1,5 @@
 using EelegantIot.Api.Domain.Entities;
 using EelegantIot.Api.Infrastructure;
-using EelegantIot.Api.Models;
 using EelegantIot.Shared.Requests.DeviceDetails;
 using EelegantIot.Shared.Requests.DeviceList;
 using EelegantIot.Shared.Requests.NewDevice;
@@ -31,7 +30,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
 
             device.DeviceUsers.Add(new UserDevices(user, device, newDeviceRequest.Name));
             await dbContext.SaveChangesAsync();
-            return NoContent();
+            return Ok(new ResponseData<NoContent>(new NoContent()));
         }
 
         device = new(Guid.NewGuid(), newDeviceRequest.Pin, DateTime.Now);
@@ -39,7 +38,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         device.DeviceUsers.Add(new UserDevices(user, device, newDeviceRequest.Name));
         dbContext.Devices.Add(device);
         await dbContext.SaveChangesAsync();
-        return NoContent();
+        return Ok(new ResponseData<NoContent>(new NoContent()));
     }
 
     [HttpGet("list")]
@@ -50,6 +49,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
             dbContext.Devices.Where(x => x.DeviceUsers.Any(x => x.UserId == userId)).AsQueryable();
 
         List<DeviceItemDto> deviceList = await devices.Select(x => new DeviceItemDto(
+                x.Id,
                 x.IsOn,
                 x.DeviceUsers.First(deviceUser => deviceUser.UserId == userId).Name,
                 x.Identifier,
@@ -79,7 +79,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
             return Ok(new ResponseData<DeviceDetailsDto>(new ErrorModel("دستگاه یافت نشد")));
         }
 
-        return device;
+        return Ok(new ResponseData<DeviceDetailsDto>(device));
     }
 
     [HttpDelete("remove/{id:guid}")]
@@ -90,10 +90,10 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
             x.Id == id && x.DeviceUsers.Any(userDevices => userDevices.UserId == userId));
         if (device is null)
         {
-            return Ok(new ErrorModel("دستگاه یافت نشد"));
+            return Ok(new ResponseData<NoContent>(new ErrorModel("دستگاه یافت نشد")));
         }
 
         device.DeviceUsers.Remove(device.DeviceUsers.First(x => x.UserId == userId));
-        return NoContent();
+        return Ok(new ResponseData<NoContent>(new NoContent()));
     }
 }

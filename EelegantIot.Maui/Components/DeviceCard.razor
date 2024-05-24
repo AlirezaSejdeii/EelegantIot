@@ -1,5 +1,4 @@
-﻿@using EelegantIot.Shared.Requests.DeviceList
-<MudPaper Class="m-2" Elevation=20>
+﻿<MudPaper Class="m-2" Elevation=20>
     <MudGrid Justify="Justify.SpaceBetween" Spacing="20">
         <MudItem xs="6" Class="d-flex align-center justify-center mud-width-full py-8" onclick="@RenderDetails">
             <MudStack>
@@ -38,7 +37,7 @@
 
     void RenderDetails()
     {
-        NavigationManager.NavigateTo("device-detail");
+        NavigationManager.NavigateTo($"device-detail/{ItemDto.Id}");
     }
 
 }

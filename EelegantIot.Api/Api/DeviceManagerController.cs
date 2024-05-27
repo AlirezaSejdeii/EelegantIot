@@ -45,7 +45,7 @@ public class DeviceManagerController : ControllerBase
         Console.WriteLine(JsonSerializer.Serialize(values));
         _logger.LogInformation("Updating device values");
         _logger.LogInformation("Fetching device");
-        Device? device = await _dbContext.Devices.Include(x => x.Logs).FirstOrDefaultAsync(x => x.Identifier == id);
+        Device? device = await _dbContext.Devices.Include(x => x.Logs).Include(x=>x.DeviceUsers).FirstOrDefaultAsync(x => x.Identifier == id);
         if (device is null)
         {
             _logger.LogInformation("Device were not found");

@@ -47,7 +47,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     {
         Guid userId = Guid.Parse(User.Identity!.Name!);
         IQueryable<Device> devices =
-            dbContext.Devices.Where(x => x.DeviceUsers.Any(x => x.UserId == userId)).AsQueryable();
+            dbContext.Devices.Where(x => x.DeviceUsers.Any(userDevices => userDevices.UserId == userId)).AsQueryable();
 
         List<DeviceItemDto> deviceList = await devices.Select(x => new DeviceItemDto(
                 x.Id,
@@ -66,6 +66,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         DeviceDetailsDto? device = await dbContext.Devices
             .Where(x => x.Id == id && x.DeviceUsers.Any(userDevices => userDevices.UserId == userId))
             .Select(x => new DeviceDetailsDto(
+                x.Id,
                 x.Current,
                 x.Voltage,
                 x.Temperature,
@@ -98,7 +99,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         return Ok(new ResponseData<NoContent>(new NoContent()));
     }
 
-    [HttpGet]
+    [HttpGet("chart/{id:guid}")]
     public async Task<ActionResult<ResponseData<ChartDataResponse>>> GetChartData(
         Guid id,
         [FromQuery] ChartDataRequest request)
@@ -118,25 +119,25 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         Series temperature = new Series
         {
             Name = "Temperature",
-            Numbers = device.Logs.Select(x => x.Temperature).ToList()
+            Numbers = device.Logs.Select(x => x.Temperature).ToArray()
         };
 
         Series humidity = new Series
         {
             Name = "Humidity",
-            Numbers = device.Logs.Select(x => x.Humidity).ToList()
+            Numbers = device.Logs.Select(x => x.Humidity).ToArray()
         };
 
         Series current = new Series
         {
             Name = "Current",
-            Numbers = device.Logs.Select(x => x.Current).ToList()
+            Numbers = device.Logs.Select(x => x.Current).ToArray()
         };
 
         Series voltage = new Series
         {
             Name = "Voltage",
-            Numbers = device.Logs.Select(x => x.Voltage).ToList()
+            Numbers = device.Logs.Select(x => x.Voltage).ToArray()
         };
 
         response.Series.AddRange([temperature, humidity, current, voltage]);

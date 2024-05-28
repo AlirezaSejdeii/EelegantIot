@@ -1,5 +1,6 @@
 @page "/device-detail/{Id:guid}"
 @using EelegantIot.Shared.Requests.DeviceDetails
+@using EelegantIot.Shared.Requests.ChartData
 @attribute [Authorize]
 
 @if (!_loading)
@@ -81,23 +82,23 @@
         <MudCardContent>
             <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
         </MudCardContent>
-        <MudCardActions>
-            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
-        </MudCardActions>
+        @* <MudCardActions> *@
+        @*     <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton> *@
+        @* </MudCardActions> *@
     </MudCard>
-    <MudCard Class="mt-3" Outlined="true">
-        <MudCardHeader>
-            <MudText Typo="Typo.h6">نمودار جریان</MudText>
-        </MudCardHeader>
-        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
-        <MudCardContent>
-            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton>
-        </MudCardActions>
-    </MudCard>
-    
+    @* <MudCard Class="mt-3" Outlined="true"> *@
+    @*     <MudCardHeader> *@
+    @*         <MudText Typo="Typo.h6">نمودار جریان</MudText> *@
+    @*     </MudCardHeader> *@
+    @*     <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider> *@
+    @*     <MudCardContent> *@
+    @*         <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton> *@
+    @*     </MudCardContent> *@
+    @*     <MudCardActions> *@
+    @*         <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton> *@
+    @*     </MudCardActions> *@
+    @* </MudCard> *@
+
     <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Delete" Class="mt-3 mb-3" Color="Color.Error" Variant="Variant.Filled">حذف دستگاه</MudButton>
 }
 else
@@ -125,11 +126,10 @@ else
     [Inject] public ISnackbar SnackbarService { get; set; }
     [Parameter] public Guid Id { get; set; }
     DeviceDetailsDto _item;
-    
+
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        Console.WriteLine("test");
         ResponseData<DeviceDetailsDto> result = await DeviceService.GetDeviceById(Id);
         if (!result.Success)
         {
@@ -155,15 +155,13 @@ else
         _loading = false;
     }
 
-    public void OpenChartDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
-        DialogService.Show<Chart>("نمایش چارت", options);
-    }
-
     public void OpenDatePickerDialog()
     {
+        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id } };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
-        DialogService.Show<CustomDatePicker>("انتخاب بازه زمانی", options);
+        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
     }
+
+}
+
 }

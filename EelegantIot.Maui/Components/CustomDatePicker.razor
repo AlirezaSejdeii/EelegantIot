@@ -1,17 +1,73 @@
 @using System.Globalization
 @using System.Reflection
-<MudDialog>
-    <DialogContent>
-        <MudDateRangePicker Culture="GetPersianCulture()"></MudDateRangePicker>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="Submit" FullWidth>تایید</MudButton>
-    </DialogActions>
-</MudDialog>
+@using EelegantIot.Shared.Requests.ChartData
+@if (loading)
+{
+    <MudSkeleton Animation="Animation.Pulse" SkeletonType="SkeletonType.Rectangle" Height="60px" Class="mt-6"/>
+}
+else
+{
+    if (dateDialog)
+    {
+        <MudDialog>
+            <DialogContent>
+                <MudDateRangePicker Culture="GetPersianCulture()" @bind-DateRange="dateRange"></MudDateRangePicker>
+            </DialogContent>
+            <DialogActions>
+                <MudButton Color="Color.Primary" OnClick="Submit" FullWidth>تایید</MudButton>
+            </DialogActions>
+        </MudDialog>
+    }
+    else
+    {
+        <MudDialog>
+            <DialogContent>
+                <MudChart ChartType="ChartType.Line" ChartSeries="@_series" InputLabels="@_labels" Width="100%" Height="500px" CanHideSeries/>
+            </DialogContent>
+        </MudDialog>
+    }
+}
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    [Inject] DeviceService DeviceService { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
+    [Parameter] public Guid id { get; set; }
+    DateRange dateRange = new();
+    ChartDataRequest dateRequest = new();
+    bool loading;
+    bool dateDialog = true;
+
+    List<ChartSeries> _series = new();
+    string[] _labels;
+
+    async Task Submit()
+    {
+        if (dateRange.Start is not null && dateRange.End is not null)
+        {
+            dateRequest.StartDate = dateRange.Start.Value;
+            dateRequest.EndDate = dateRange.End.Value;
+            var chartData = await DeviceService.GetDeviceChart(id, dateRequest);
+            if (!chartData.Success)
+            {
+                Snackbar.Add("متاسفانه قادر به واکشی دیتا نیست", Severity.Error);
+            }
+            else
+            {
+                foreach (Series item in chartData.Data!.Series)
+                {
+                    _series.Add(new ChartSeries
+                    {
+                        Name = item.Name,
+                        Data = item.Numbers
+                    });
+                }
+
+                _labels = chartData.Data.Labels.Select(x => $"{x.Date.Month} / {x.Date.Day}").ToArray();
+                dateDialog = false;
+            }
+        }
+    }
 
     public CultureInfo GetPersianCulture()
     {
@@ -33,7 +89,7 @@
         formatInfo.ShortDatePattern = "yyyy/MM/dd";
         formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
         formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
-        System.Globalization.Calendar cal = new PersianCalendar();
+        Calendar cal = new PersianCalendar();
         FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
         if (fieldInfo != null)
             fieldInfo.SetValue(culture, cal);

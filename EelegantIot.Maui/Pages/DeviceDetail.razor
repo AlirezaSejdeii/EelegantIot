@@ -1,6 +1,11 @@
 @page "/device-detail/{Id:guid}"
+@implements IAsyncDisposable
 @using EelegantIot.Shared.Requests.DeviceDetails
 @using EelegantIot.Shared.Requests.ChartData
+@using Microsoft.AspNetCore.SignalR.Client
+@using EelegantIot.Shared.Hubs
+@using Microsoft.AspNetCore.Http.Connections
+@using EelegantIot.Shared
 @attribute [Authorize]
 
 @if (!_loading)
@@ -86,20 +91,7 @@
         @*     <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton> *@
         @* </MudCardActions> *@
     </MudCard>
-    @* <MudCard Class="mt-3" Outlined="true"> *@
-    @*     <MudCardHeader> *@
-    @*         <MudText Typo="Typo.h6">نمودار جریان</MudText> *@
-    @*     </MudCardHeader> *@
-    @*     <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider> *@
-    @*     <MudCardContent> *@
-    @*         <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton> *@
-    @*     </MudCardContent> *@
-    @*     <MudCardActions> *@
-    @*         <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton> *@
-    @*     </MudCardActions> *@
-    @* </MudCard> *@
-
-    <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Delete" Class="mt-3 mb-3" Color="Color.Error" Variant="Variant.Filled">حذف دستگاه</MudButton>
+    <MudButton OnClick="@DeleteDevice" FullWidth StartIcon="@Icons.Material.Outlined.Delete" Class="mt-3 mb-3" Color="Color.Error" Variant="Variant.Filled">حذف دستگاه</MudButton>
 }
 else
 {
@@ -123,9 +115,40 @@ else
     TimeSpan? endAt;
     [Inject] public IDialogService DialogService { get; set; }
     [Inject] public DeviceService DeviceService { get; set; }
+    [Inject] public UserService UserService { get; set; }
     [Inject] public ISnackbar SnackbarService { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
     [Parameter] public Guid Id { get; set; }
     DeviceDetailsDto _item;
+    HubConnection connection;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        HubConnectionBuilder hubConnectionBuilder = new();
+        string token = await UserService.GetLoginToken();
+        connection = hubConnectionBuilder.WithUrl(Config.WebSocket, options =>
+            {
+                options.SkipNegotiation = true;
+                options.Transports = HttpTransportType.WebSockets;
+                options.AccessTokenProvider = () => Task.FromResult(token)!;
+            })
+            .Build();
+        hubConnectionBuilder.WithAutomaticReconnect();
+
+        await connection.StartAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Console.WriteLine("Failed to connect websocket");
+            }
+            else
+            {
+                Console.WriteLine("Connected");
+            }
+        });
+
+        connection.On<DeviceHubUpdateDto>("OnDeviceUpdated", UpdatePage);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -155,6 +178,19 @@ else
         _loading = false;
     }
 
+    void UpdatePage(DeviceHubUpdateDto values)
+    {
+        if (_item.Id.ToString() == values.DeviceId.ToString())
+        {
+            _item.Humidity = values.Humidity;
+            _item.Temperature = values.Temperature;
+            _item.Voltage = values.Voltage;
+            _item.Current = values.Current;
+            _item.IsOn = values.IsOn;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
     public void OpenDatePickerDialog()
     {
         var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id } };
@@ -162,6 +198,33 @@ else
         DialogService.Show<CustomDatePicker>("چارت", parameters, options);
     }
 
-}
+    private async Task DeleteDevice()
+    {
+        DialogOptions options = new()
+        {
+            FullScreen = false,
+            MaxWidth = MaxWidth.Small
+        };
+        var result = await DialogService.Show<DeleteDevice>("حذف دستگاه", options).Result;
+        if ((bool)result.Data)
+        {
+            _loading = true;
+            var deleteResult = await DeviceService.DeleteDeviceAsync(_item.Id);
+            if (!deleteResult.Success)
+            {
+                SnackbarService.Add(deleteResult.Error!.ErrorMessage, Severity.Error);
+                _loading = false;
+                return;
+            }
+
+            NavigationManager.NavigateTo("/devices");
+            _loading = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await connection.DisposeAsync();
+    }
 
 }

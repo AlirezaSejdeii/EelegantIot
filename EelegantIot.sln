@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EelegantIot.Api", "Eelegant
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceMock", "DeviceMock\DeviceMock.csproj", "{1D20BA23-D0A0-49CF-88DB-BD47DA9AEF8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebsocket", "TestWebsocket\TestWebsocket.csproj", "{6792794E-62F6-408C-ACC1-7E86645F48DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{1D20BA23-D0A0-49CF-88DB-BD47DA9AEF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D20BA23-D0A0-49CF-88DB-BD47DA9AEF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D20BA23-D0A0-49CF-88DB-BD47DA9AEF8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6792794E-62F6-408C-ACC1-7E86645F48DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6792794E-62F6-408C-ACC1-7E86645F48DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6792794E-62F6-408C-ACC1-7E86645F48DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6792794E-62F6-408C-ACC1-7E86645F48DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

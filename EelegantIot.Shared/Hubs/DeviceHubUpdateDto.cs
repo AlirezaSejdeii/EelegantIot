@@ -1,3 +1,9 @@
 namespace EelegantIot.Shared.Hubs;
 
-public record DeviceHubUpdateDto(double Humidity,double Temperature,double Current,double Voltage,bool IsOn);
+public record DeviceHubUpdateDto(
+    Guid DeviceId,
+    double Humidity,
+    double Temperature,
+    double Current,
+    double Voltage,
+    bool IsOn);

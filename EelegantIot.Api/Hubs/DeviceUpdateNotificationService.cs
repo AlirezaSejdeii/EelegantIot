@@ -12,7 +12,6 @@ public class DeviceUpdateNotificationService : IDeviceUpdateNotificationService
 
     public DeviceUpdateNotificationService(
         IHubContext<UpdateDeviceHub, IDeviceUpdateClient> hubContext,
-        AppDbContext dbContext,
         ILogger<DeviceUpdateNotificationService> logger)
     {
         _hubContext = hubContext;
@@ -26,6 +25,7 @@ public class DeviceUpdateNotificationService : IDeviceUpdateNotificationService
         {
             _logger.LogInformation("sending notification to given device user");
             await _hubContext.Clients.User(userId.ToString()).OnDeviceUpdated(new DeviceHubUpdateDto(
+                device.Id,
                 device.Humidity,
                 device.Temperature,
                 device.Current,

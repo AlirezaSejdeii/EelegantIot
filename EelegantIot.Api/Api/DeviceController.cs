@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using EelegantIot.Api.Domain.Entities;
 using EelegantIot.Api.Infrastructure;
 using EelegantIot.Shared.Requests.ChartData;
@@ -45,7 +46,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     [HttpGet("list")]
     public async Task<ActionResult<ResponseData<List<DeviceItemDto>>>> GetDeviceList()
     {
-        Guid userId = Guid.Parse(User.Identity!.Name!);
+        Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         IQueryable<Device> devices =
             dbContext.Devices.Where(x => x.DeviceUsers.Any(userDevices => userDevices.UserId == userId)).AsQueryable();
 
@@ -62,7 +63,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     [HttpGet("details/{id:guid}")]
     public async Task<ActionResult<DeviceDetailsDto>> GetDeviceDetails(Guid id)
     {
-        Guid userId = Guid.Parse(User.Identity!.Name!);
+        Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         DeviceDetailsDto? device = await dbContext.Devices
             .Where(x => x.Id == id && x.DeviceUsers.Any(userDevices => userDevices.UserId == userId))
             .Select(x => new DeviceDetailsDto(
@@ -71,6 +72,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
                 x.Voltage,
                 x.Temperature,
                 x.Humidity,
+                x.IsOn,
                 (SettingMode)x.SettingMode,
                 x.StartAt,
                 x.EndAt,
@@ -87,7 +89,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     [HttpDelete("remove/{id:guid}")]
     public async Task<IActionResult> UnboundUserFromDevice(Guid id)
     {
-        Guid userId = Guid.Parse(User.Identity!.Name!);
+        Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         Device? device = await dbContext.Devices.Include(device => device.DeviceUsers).FirstOrDefaultAsync(x =>
             x.Id == id && x.DeviceUsers.Any(userDevices => userDevices.UserId == userId));
         if (device is null)
@@ -96,6 +98,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         }
 
         device.DeviceUsers.Remove(device.DeviceUsers.First(x => x.UserId == userId));
+        await dbContext.SaveChangesAsync();
         return Ok(new ResponseData<NoContent>(new NoContent()));
     }
 
@@ -114,7 +117,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         }
 
         ChartDataResponse response = new();
-        response.Labels.AddRange(device.Logs.Select(x => x.CreatedAt).ToList().DistinctBy(x=>x.Date));
+        response.Labels.AddRange(device.Logs.Select(x => x.CreatedAt).ToList().DistinctBy(x => x.Date));
 
         Series temperature = new Series
         {

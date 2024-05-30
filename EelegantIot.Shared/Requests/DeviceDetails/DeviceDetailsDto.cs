@@ -6,6 +6,7 @@ public class DeviceDetailsDto(
     double voltage,
     double temperature,
     double humidity,
+    bool isOn,
     SettingMode settingMode,
     TimeOnly startAt,
     TimeOnly endAt,
@@ -20,4 +21,5 @@ public class DeviceDetailsDto(
     public TimeOnly StartAt { set; get; } = startAt;
     public TimeOnly EndAt { set; get; } = endAt;
     public int[]? WorkingDays { set; get; } = workingDays;
+    public bool IsOn { set; get; } = isOn;
 };

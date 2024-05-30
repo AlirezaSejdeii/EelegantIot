@@ -1,0 +1,29 @@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1"/>
+            حذف دستگاه
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>آیا از حذف این دستگاه اطمینان دارید؟</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Info" OnClick="Cancel">منصرف شدم</MudButton>
+        <MudButton Color="Color.Error" OnClick="Confirm">حذف شود</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Ok(false));
+    }
+
+    private void Confirm()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

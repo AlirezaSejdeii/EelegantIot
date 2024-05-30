@@ -51,8 +51,8 @@ public class UserControllers(AppDbContext dbContext, IOptions<JwtConfigDto> jwtO
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, user.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Username),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             }),
 
             Expires = DateTime.Now.AddDays(jwtOptions.Value.ValidDays),

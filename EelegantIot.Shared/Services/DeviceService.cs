@@ -84,7 +84,6 @@ public class DeviceService : IDeviceService
         {
             DefaultRequestHeaders = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
         };
-        Console.WriteLine(id);
         HttpResponseMessage responseMessage =
             await httpClient.GetAsync(Config.Api +
                                       $"/devices/chart/{id}?StartDate={request.StartDate}&EndDate={request.EndDate}");
@@ -96,6 +95,28 @@ public class DeviceService : IDeviceService
 
         ResponseData<ChartDataResponse> result =
             await responseMessage.Content.ReadFromJsonAsync<ResponseData<ChartDataResponse>>();
+
+        return result;
+    }
+
+    public async Task<ResponseData<NoContent>> DeleteDeviceAsync(Guid id)
+    {
+        string token = await _userService.GetLoginToken();
+        HttpClient httpClient = new()
+        {
+            DefaultRequestHeaders = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
+        };
+        HttpResponseMessage responseMessage =
+            await httpClient.DeleteAsync(Config.Api +
+                                      $"/devices/remove/{id}");
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            return new ResponseData<NoContent>(new ErrorModel("مشکلی در ارتباط با سرور وجود دارد"));
+        }
+
+        ResponseData<NoContent> result =
+            await responseMessage.Content.ReadFromJsonAsync<ResponseData<NoContent>>();
 
         return result;
     }

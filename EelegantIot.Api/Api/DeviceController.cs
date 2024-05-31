@@ -21,7 +21,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     [HttpPost("new")]
     public async Task<IActionResult> NewDevice(NewDeviceRequest newDeviceRequest)
     {
-        Guid userId = Guid.Parse(User.Identity!.Name!);
+        Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         User user = dbContext.Users.First(x => x.Id == userId);
         if (dbContext.Devices.Include(deviceLoad => deviceLoad.DeviceUsers)
                 .FirstOrDefault(x => x.Identifier == newDeviceRequest.Pin) is { } device)
@@ -104,7 +104,8 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     }
 
     [HttpPut("update-timer/{id:guid}")]
-    public async Task<IActionResult> UpdateDevice(Guid id, UpdateDeviceRequest request)
+    public async Task<ActionResult<ResponseData<NoContent>>> UpdateDevice(Guid id,
+        [FromBody] UpdateDeviceRequest request)
     {
         Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         Device? device = await dbContext.Devices.Include(device => device.DeviceUsers).FirstOrDefaultAsync(x =>
@@ -121,7 +122,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
     }
 
     [HttpPut("toggle-is-on/{id:guid}")]
-    public async Task<IActionResult> UpdateDevice(Guid id)
+    public async Task<ActionResult<ResponseData<NoContent>>> UpdateDevice(Guid id)
     {
         Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         Device? device = await dbContext.Devices.Include(device => device.DeviceUsers).FirstOrDefaultAsync(x =>
@@ -131,9 +132,18 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
             return Ok(new ResponseData<NoContent>(new ErrorModel("دستگاه یافت نشد")));
         }
 
-        device.ToggleIsOnManually(DateTime.Now);
+        if (device.SettingMode is Domain.Enums.SettingMode.Manual)
+        {
+            device.ToggleIsOnManually(DateTime.Now);
+        }
+        else
+        {
+            device.ChangeToManual(DateTime.Now);
+        }
+
         device.ArrangeStatus(DateTime.Now);
         await dbContext.SaveChangesAsync();
+
         return Ok(new ResponseData<NoContent>(new NoContent()));
     }
 

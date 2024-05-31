@@ -42,27 +42,35 @@ public class UserService : AuthenticationStateProvider
 
     public async Task<string?> LoginOrSignUpUser(string username, string password)
     {
-        HttpClient httpClient = new();
-        HttpResponseMessage responseMessage = await httpClient.PostAsJsonAsync(Config.Api + "/users/login",
-            new LoginRequest { Username = username, Password = password });
-
-        if (!responseMessage.IsSuccessStatusCode)
+        try
         {
-            return "مشکلی در ارتباط با وب سرور وجود دارد";
+            HttpClient httpClient = new();
+            HttpResponseMessage responseMessage = await httpClient.PostAsJsonAsync(Config.Api + "/users/login",
+                new LoginRequest { Username = username, Password = password });
+
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return "مشکلی در ارتباط با وب سرور وجود دارد";
+            }
+
+            ResponseData<LoginResponse>? result =
+                await responseMessage.Content.ReadFromJsonAsync<ResponseData<LoginResponse>>();
+
+            if (!result.Value.Success)
+            {
+                return result.Value.Error!.ErrorMessage;
+            }
+
+            await _localStorageService.SetItemAsStringAsync(LoginTokenKeyToken, result.Value.Data!.Token);
+            await _localStorageService.SetItemAsStringAsync(LoginTokenKeyExpireDate,
+                result.Value.Data!.ExpireDate.ToString(CultureInfo.InvariantCulture));
+            await GetAuthenticationStateAsync();
         }
-
-        ResponseData<LoginResponse>? result =
-            await responseMessage.Content.ReadFromJsonAsync<ResponseData<LoginResponse>>();
-
-        if (!result.Value.Success)
+        catch (Exception e)
         {
-            return result.Value.Error!.ErrorMessage;
+            Console.WriteLine(e);
+            throw;
         }
-
-        await _localStorageService.SetItemAsStringAsync(LoginTokenKeyToken, result.Value.Data!.Token);
-        await _localStorageService.SetItemAsStringAsync(LoginTokenKeyExpireDate,
-            result.Value.Data!.ExpireDate.ToString(CultureInfo.InvariantCulture));
-        await GetAuthenticationStateAsync();
         return null;
     }
 

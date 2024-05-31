@@ -60,8 +60,7 @@ public class Device : BaseEntity
     {
         if (
             SettingMode is SettingMode.Timer &&
-            DayOfWeeks != null &&
-            DayOfWeeks.Any(x => (DayOfWeek)x == now.DayOfWeek))
+            DayOfWeeks != null)
         {
             TimeSpan start = StartAt.ToTimeSpan();
             TimeSpan end = EndAt.ToTimeSpan();
@@ -77,10 +76,15 @@ public class Device : BaseEntity
             {
                 IsOn = false;
             }
+
+            if (DayOfWeeks.All(x => (DayOfWeek)x != now.DayOfWeek))
+            {
+                IsOn = false;
+            }
         }
     }
 
-    public void UpdateTimer(int[] dayOfWeeks,TimeOnly startAt,TimeOnly endAt,DateTime now)
+    public void UpdateTimer(int[] dayOfWeeks, TimeOnly startAt, TimeOnly endAt, DateTime now)
     {
         DayOfWeeks = dayOfWeeks;
         StartAt = startAt;
@@ -94,5 +98,10 @@ public class Device : BaseEntity
         IsOn = !IsOn;
         SettingMode = SettingMode.Manual;
         UpdatedAt = now;
+    }
+
+    public void ChangeToManual(DateTime now)
+    {
+        SettingMode = SettingMode.Manual;
     }
 }

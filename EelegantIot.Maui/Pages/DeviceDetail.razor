@@ -1,11 +1,11 @@
 @page "/device-detail/{Id:guid}"
 @implements IAsyncDisposable
 @using EelegantIot.Shared.Requests.DeviceDetails
-@using EelegantIot.Shared.Requests.ChartData
 @using Microsoft.AspNetCore.SignalR.Client
 @using EelegantIot.Shared.Hubs
 @using Microsoft.AspNetCore.Http.Connections
 @using EelegantIot.Shared
+@using EelegantIot.Shared.Requests.UpdateDevice
 @attribute [Authorize]
 
 @if (!_loading)
@@ -43,8 +43,40 @@
             </MudStack>
         </MudCardContent>
     </MudCard>
-    <MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" Class="mt-3">خاموش کن</MudButton>
+    <MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" Class="mt-3" OnClick="ToggleManually">
+        @if (_item.SettingMode is SettingMode.Manual)
+        {
+            @if (_item.IsOn)
+            {
+                <span>خاموش کن</span>
+            }
+            else
+            {
+                <span>روشن کن</span>
+            }
+        }
+        else
+        {
+            <span>تعغیر به حالت دستی</span>
+        }
+    </MudButton>
 
+    <hr>
+    <MudContainer Fixed="true" Class="m-3">
+        @if (_item.IsOn)
+        {
+            <MudCard Class="mud-theme-primary z-10 p-3">
+                <MudText Align="Align.Right">وضعیت دستگاه: دستگاه روشن است</MudText>
+            </MudCard>
+        }
+        else
+        {
+            <MudCard Class="mud-theme-dark z-10 p-3">
+                <MudText Align="Align.Right">وضعیت دستگاه: دستگاه خاموش است</MudText>
+            </MudCard>
+        }
+    </MudContainer>
+    <hr>
     <MudCard Class="mt-3" Outlined="true">
         <MudCardHeader>
             <MudText Typo="Typo.h6">تنظیمات تایمر</MudText>
@@ -53,7 +85,7 @@
         <MudCardContent>
             <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
                 <MudText Typo="Typo.h6">تایمر</MudText>
-                <MudSwitch Color="Color.Primary" Value="@isTimerOn"></MudSwitch>
+                <MudSwitch Color="Color.Primary" Value="@isTimerOn" ReadOnly></MudSwitch>
             </MudStack>
 
             <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
@@ -76,6 +108,9 @@
                     <MudButton Class="m-1" Variant="Variant.Filled" OnClick="(() => fridaySelected = !fridaySelected)" Color="fridaySelected ? Color.Primary : Color.Dark">جمعه</MudButton>
                 </MudGrid>
             </MudStack>
+            <MudButton FullWidth Color="Color.Primary" Variant="Variant.Filled" Class="mt-3" OnClick="UpdateTimer">
+                ذخیره و روشن کردن تایمر
+            </MudButton>
         </MudCardContent>
     </MudCard>
 
@@ -85,11 +120,8 @@
         </MudCardHeader>
         <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
         <MudCardContent>
-            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">انتخاب بازه زمانی</MudButton>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">نمایش نمودار</MudButton>
         </MudCardContent>
-        @* <MudCardActions> *@
-        @*     <MudButton FullWidth StartIcon="@Icons.Material.Outlined.Input" OnClick="OpenChartDialog">نمایش نمودار</MudButton> *@
-        @* </MudCardActions> *@
     </MudCard>
     <MudButton OnClick="@DeleteDevice" FullWidth StartIcon="@Icons.Material.Outlined.Delete" Class="mt-3 mb-3" Color="Color.Error" Variant="Variant.Filled">حذف دستگاه</MudButton>
 }
@@ -194,7 +226,7 @@ else
     public void OpenDatePickerDialog()
     {
         var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id } };
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
         DialogService.Show<CustomDatePicker>("چارت", parameters, options);
     }
 
@@ -220,6 +252,62 @@ else
             NavigationManager.NavigateTo("/devices");
             _loading = false;
         }
+    }
+
+    async Task ToggleManually()
+    {
+        _loading = true;
+        ResponseData<NoContent> updateResult = await DeviceService.ToggleManuallyAsync(_item.Id);
+        if (!updateResult.Success)
+        {
+            SnackbarService.Add(updateResult.Error!.ErrorMessage, Severity.Error);
+            _loading = false;
+            return;
+        }
+
+        _loading = false;
+        NavigationManager.Refresh();
+    }
+
+    async Task UpdateTimer()
+    {
+        if (endAt is not null && startAt is not null)
+        {
+            _loading = true;
+            UpdateDeviceRequest timer = new()
+            {
+                StartTime = TimeOnly.FromTimeSpan(startAt.Value),
+                EndTime = TimeOnly.FromTimeSpan(endAt.Value),
+                DayOfWeeks = DaysOfWeek()
+            };
+            ResponseData<NoContent> updateResult = await DeviceService.UpdateTimer(_item.Id, timer);
+            if (!updateResult.Success)
+            {
+                SnackbarService.Add(updateResult.Error!.ErrorMessage, Severity.Error);
+                _loading = false;
+                return;
+            }
+
+            _loading = false;
+            NavigationManager.Refresh();
+        }
+        else
+        {
+            SnackbarService.Add("لطفا بازه زمانی را انتخاب نمایید", Severity.Error);
+        }
+    }
+
+    int[] DaysOfWeek()
+    {
+        List<int> days = new();
+        if (sundaySelected) days.Add(0);
+        if (mondaySelected) days.Add(1);
+        if (tuesdaySelected) days.Add(2);
+        if (wednesdaySelected) days.Add(3);
+        if (thursdaySelected) days.Add(4);
+        if (fridaySelected) days.Add(5);
+        if (saturdaySelected) days.Add(6);
+        return days.ToArray();
     }
 
     public async ValueTask DisposeAsync()

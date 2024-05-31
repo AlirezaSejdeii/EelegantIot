@@ -5,6 +5,7 @@ using EelegantIot.Shared.Requests.ChartData;
 using EelegantIot.Shared.Requests.DeviceDetails;
 using EelegantIot.Shared.Requests.DeviceList;
 using EelegantIot.Shared.Requests.NewDevice;
+using EelegantIot.Shared.Requests.UpdateDevice;
 using EelegantIot.Shared.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -98,6 +99,40 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         }
 
         device.DeviceUsers.Remove(device.DeviceUsers.First(x => x.UserId == userId));
+        await dbContext.SaveChangesAsync();
+        return Ok(new ResponseData<NoContent>(new NoContent()));
+    }
+
+    [HttpPut("update-timer/{id:guid}")]
+    public async Task<IActionResult> UpdateDevice(Guid id, UpdateDeviceRequest request)
+    {
+        Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+        Device? device = await dbContext.Devices.Include(device => device.DeviceUsers).FirstOrDefaultAsync(x =>
+            x.Id == id && x.DeviceUsers.Any(userDevices => userDevices.UserId == userId));
+        if (device is null)
+        {
+            return Ok(new ResponseData<NoContent>(new ErrorModel("دستگاه یافت نشد")));
+        }
+
+        device.UpdateTimer(request.DayOfWeeks, request.StartTime, request.EndTime, DateTime.Now);
+        device.ArrangeStatus(DateTime.Now);
+        await dbContext.SaveChangesAsync();
+        return Ok(new ResponseData<NoContent>(new NoContent()));
+    }
+
+    [HttpPut("toggle-is-on/{id:guid}")]
+    public async Task<IActionResult> UpdateDevice(Guid id)
+    {
+        Guid userId = Guid.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+        Device? device = await dbContext.Devices.Include(device => device.DeviceUsers).FirstOrDefaultAsync(x =>
+            x.Id == id && x.DeviceUsers.Any(userDevices => userDevices.UserId == userId));
+        if (device is null)
+        {
+            return Ok(new ResponseData<NoContent>(new ErrorModel("دستگاه یافت نشد")));
+        }
+
+        device.ToggleIsOnManually(DateTime.Now);
+        device.ArrangeStatus(DateTime.Now);
         await dbContext.SaveChangesAsync();
         return Ok(new ResponseData<NoContent>(new NoContent()));
     }

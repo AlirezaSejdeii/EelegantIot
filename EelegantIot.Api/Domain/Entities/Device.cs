@@ -79,4 +79,20 @@ public class Device : BaseEntity
             }
         }
     }
+
+    public void UpdateTimer(int[] dayOfWeeks,TimeOnly startAt,TimeOnly endAt,DateTime now)
+    {
+        DayOfWeeks = dayOfWeeks;
+        StartAt = startAt;
+        EndAt = endAt;
+        SettingMode = SettingMode.Timer;
+        UpdatedAt = now;
+    }
+
+    public void ToggleIsOnManually(DateTime now)
+    {
+        IsOn = !IsOn;
+        SettingMode = SettingMode.Manual;
+        UpdatedAt = now;
+    }
 }

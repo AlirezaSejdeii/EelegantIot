@@ -10,6 +10,7 @@ using EelegantIot.Shared.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NoContent = EelegantIot.Shared.Response.NoContent;
 
 namespace EelegantIot.Api.Api;
 

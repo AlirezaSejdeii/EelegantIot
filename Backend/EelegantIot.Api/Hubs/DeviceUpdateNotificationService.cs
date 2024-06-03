@@ -1,5 +1,4 @@
 using EelegantIot.Api.Domain.Entities;
-using EelegantIot.Api.Infrastructure;
 using EelegantIot.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
 

@@ -264,9 +264,8 @@ else
             _loading = false;
             return;
         }
-
         _loading = false;
-        NavigationManager.Refresh();
+        await Reload();
     }
 
     async Task UpdateTimer()
@@ -289,7 +288,7 @@ else
             }
 
             _loading = false;
-            NavigationManager.Refresh();
+            await Reload();
         }
         else
         {
@@ -313,6 +312,12 @@ else
     public async ValueTask DisposeAsync()
     {
         await connection.DisposeAsync();
+    }
+
+    async Task Reload()
+    {
+        await OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
 }

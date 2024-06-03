@@ -62,7 +62,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\EelegantIot.Shared\EelegantIot.Shared.csproj" />
+      <ProjectReference Include="..\Backend\EelegantIot.Shared\EelegantIot.Shared.csproj" />
     </ItemGroup>
 
 </Project>

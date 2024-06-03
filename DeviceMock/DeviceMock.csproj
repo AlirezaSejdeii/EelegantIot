@@ -9,12 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\Backend\EelegantIot.Api\EelegantIot.Api.csproj" />
       <ProjectReference Include="..\EelegantIot.Api\EelegantIot.Api.csproj" />
     </ItemGroup>
 

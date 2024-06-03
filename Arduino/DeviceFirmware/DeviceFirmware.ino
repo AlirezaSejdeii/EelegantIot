@@ -4,6 +4,8 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 #include <ZMPT101B.h>
+#include <random>
+#include <iostream>
 #define SENSITIVITY 500.0f
 #define DHTTYPE DHT11  //DHT 21 (AM2301)
 
@@ -106,6 +108,18 @@ void setup() {
   dht.begin();
 }
 
+std::mt19937 gen(std::random_device{}()); // Define the generator globally
+
+void setRandomFloatInRange(float &variable, float min, float max) {
+  std::uniform_real_distribution<> dis(min, max);
+  variable = dis(gen);
+}
+
+void setRandomDoubleInRange(double &variable, double min, double max) {
+  std::uniform_real_distribution<> dis(min, max);
+  variable = dis(gen);
+}
+
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
 
@@ -170,7 +184,11 @@ void loop() {
     }
 
 
-    StaticJsonDocument<4> docToSendData;
+    StaticJsonDocument<1024> docToSendData;
+    setRandomFloatInRange(temperature, 20,30);
+    setRandomFloatInRange(humidity, 50,70);
+    setRandomDoubleInRange(current, 1,10);
+    setRandomFloatInRange(voltage, 210,220);
     docToSendData["temperature"] = temperature;
     docToSendData["humidity"] = humidity;
     docToSendData["current"] = current;

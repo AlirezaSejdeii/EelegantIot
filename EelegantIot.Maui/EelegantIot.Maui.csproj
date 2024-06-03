@@ -15,7 +15,7 @@
         <ApplicationTitle>Smart IOT Conductor</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.eelegantiot.maui</ApplicationId>
+        <ApplicationId>com.eelegantiot.maui</ApplicationId>
         <ApplicationIdGuid>00D761C3-C2DF-4B41-A633-5AA0BB7FDF26</ApplicationIdGuid>
 
         <!-- Versions -->
@@ -33,6 +33,10 @@
 
     <PropertyGroup>
       <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
@@ -58,7 +62,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.2.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
         <PackageReference Include="MudBlazor" Version="6.19.1" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
     </ItemGroup>
 
     <ItemGroup>

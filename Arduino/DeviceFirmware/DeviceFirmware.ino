@@ -14,7 +14,7 @@ ZMPT101B voltageSensor(A0, 50.0);
 
 const char* ssid = "MobinNet_2472";
 const char* password = "8311100@alireza!";
-const char* serverUrl = "https://192.168.1.100:7245";
+const char* serverUrl = "https://elegant.liara.run";
 const char* identifier = "iot-device-0001";
 
 const int relayPin = D0;  // Pin connected to relay

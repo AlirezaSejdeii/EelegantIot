@@ -11,7 +11,12 @@ else
     {
         <MudDialog>
             <DialogContent>
-                <MudDateRangePicker Culture="GetPersianCulture()" @bind-DateRange="dateRange"></MudDateRangePicker>
+                <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                    <InputPersianDatePicker @bind-value="startDate" MinDateSetOnToday="false" CssClass="form-control" Style="width:100%" Placeholder="شروع بازه" DigitType="DigitType.English"/>
+                </MudStack>
+                <MudStack Row="true" Justify="Justify.SpaceBetween" Spacing="10" Class="p-2">
+                    <InputPersianDatePicker @bind-value="endDate" MinDateSetOnToday="false" CssClass="form-control" Style="width:100%" Placeholder="انتهای بازه" DigitType="DigitType.English"/>
+                </MudStack>
             </DialogContent>
             <DialogActions>
                 <MudButton Color="Color.Primary" OnClick="Submit" FullWidth>تایید</MudButton>
@@ -22,7 +27,7 @@ else
     {
         <MudDialog>
             <DialogContent>
-                <MudChart ChartType="ChartType.Line" ChartSeries="@_series" InputLabels="@_labels" Width="100%" Height="500px" CanHideSeries/>
+                <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="_labels.ToArray()" Width="100%" Height="500px" ChartOptions="chartOptions"/>
             </DialogContent>
         </MudDialog>
     }
@@ -33,16 +38,31 @@ else
     [Inject] DeviceService DeviceService { get; set; }
     [Inject] ISnackbar Snackbar { get; set; }
     [Parameter] public Guid id { get; set; }
+    [Parameter] public string whichSerieToShow { get; set; }
     DateRange dateRange = new();
+    string startDate;
+    string endDate;
     ChartDataRequest dateRequest = new();
     bool loading;
     bool dateDialog = true;
 
     List<ChartSeries> _series = new();
-    string[] _labels;
+    List<string> _labels;
+    string[] _xaxis;
+    ChartOptions chartOptions = new();
 
     async Task Submit()
     {
+        chartOptions.YAxisTicks = 10;
+        if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+        {
+            Snackbar.Add("لطفا بازه زمانی را انتخاب کنید", Severity.Error);
+        }
+
+        PersianCalendar pa = new();
+        dateRange.Start = pa.ToDateTime(int.Parse(startDate.Substring(0, 4)), int.Parse(startDate.Substring(5, 2)), int.Parse(startDate.Substring(8, 2)), 0, 0, 0, 0);
+        dateRange.End = pa.ToDateTime(int.Parse(endDate.Substring(0, 4)), int.Parse(endDate.Substring(5, 2)), int.Parse(endDate.Substring(8, 2)), 0, 0, 0, 0);
+
         if (dateRange.Start is not null && dateRange.End is not null)
         {
             dateRequest.StartDate = dateRange.Start.Value;
@@ -54,53 +74,33 @@ else
             }
             else
             {
-                foreach (Series item in chartData.Data!.Series)
+                if (chartData.Data!.Series.FirstOrDefault(x => x.Name == whichSerieToShow) is { } item)
                 {
                     _series.Add(new ChartSeries
                     {
                         Name = item.Name,
-                        Data = item.Numbers
+                        Data = item.Numbers.ToArray()
                     });
+
+                    _labels = chartData.Data.Labels.Select(x => $"{pa.GetYear(x.Date)}/{pa.GetMonth(x.Date)}/{pa.GetDayOfMonth(x.Date)}").ToList();
+
+                    HashSet<string> seen = new HashSet<string>();
+                    for (int i = 0; i < _labels.Count; i++)
+                    {
+                        if (seen.Contains(_labels[i]))
+                        {
+                            _labels[i] = string.Empty;
+                        }
+                        else
+                        {
+                            seen.Add(_labels[i]);
+                        }
+                    }
                 }
 
-                _labels = chartData.Data.Labels.Select(x => $"{x.Date.Month} / {x.Date.Day}").ToArray();
                 dateDialog = false;
             }
         }
     }
 
-    public CultureInfo GetPersianCulture()
-    {
-        var culture = new CultureInfo("fa-IR");
-        DateTimeFormatInfo formatInfo = culture.DateTimeFormat;
-        formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
-        formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
-        var monthNames = new[]
-        {
-            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن",
-            "اسفند",
-            "",
-        };
-        formatInfo.AbbreviatedMonthNames =
-            formatInfo.MonthNames =
-                formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
-        formatInfo.AMDesignator = "ق.ظ";
-        formatInfo.PMDesignator = "ب.ظ";
-        formatInfo.ShortDatePattern = "yyyy/MM/dd";
-        formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
-        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
-        Calendar cal = new PersianCalendar();
-        FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (fieldInfo != null)
-            fieldInfo.SetValue(culture, cal);
-        FieldInfo info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (info != null)
-            info.SetValue(formatInfo, cal);
-        culture.NumberFormat.NumberDecimalSeparator = "/";
-        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
-        culture.NumberFormat.NumberNegativePattern = 0;
-        return culture;
-    }
-
 }
-

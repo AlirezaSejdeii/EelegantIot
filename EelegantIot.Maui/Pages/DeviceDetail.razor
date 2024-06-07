@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Http.Connections
 @using EelegantIot.Shared
 @using EelegantIot.Shared.Requests.UpdateDevice
+@using Align = MudBlazor.Align
 @attribute [Authorize]
 
 @if (!_loading)
@@ -120,7 +121,37 @@
         </MudCardHeader>
         <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
         <MudCardContent>
-            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialog">نمایش نمودار</MudButton>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialogTemperature">نمایش نمودار</MudButton>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">نمودار رطوبت</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialogHumidity">نمایش نمودار</MudButton>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">نمودار جریان</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialogCurrent">نمایش نمودار</MudButton>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Class="mt-3" Outlined="true">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">نمودار ولتاژ</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" Light="false"></MudDivider>
+        <MudCardContent>
+            <MudButton FullWidth StartIcon="@Icons.Material.Outlined.DateRange" OnClick="OpenDatePickerDialogVoltage">نمایش نمودار</MudButton>
         </MudCardContent>
     </MudCard>
     <MudButton OnClick="@DeleteDevice" FullWidth StartIcon="@Icons.Material.Outlined.Delete" Class="mt-3 mb-3" Color="Color.Error" Variant="Variant.Filled">حذف دستگاه</MudButton>
@@ -223,9 +254,34 @@ else
         }
     }
 
-    public void OpenDatePickerDialog()
+    public void OpenDatePickerDialogTemperature()
     {
-        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id } };
+        string series = "Temperature";
+        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
+        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+    }
+
+    public void OpenDatePickerDialogHumidity()
+    {
+        string series = "Humidity";
+        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
+        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+    }
+
+    public void OpenDatePickerDialogCurrent()
+    {
+        string series = "Current";
+        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
+        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+    }
+
+    public void OpenDatePickerDialogVoltage()
+    {
+        string series = "Voltage";
+        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
         DialogService.Show<CustomDatePicker>("چارت", parameters, options);
     }
@@ -264,6 +320,7 @@ else
             _loading = false;
             return;
         }
+
         _loading = false;
         await Reload();
     }

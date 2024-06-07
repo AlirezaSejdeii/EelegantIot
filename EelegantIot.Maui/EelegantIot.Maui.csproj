@@ -58,6 +58,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Blazor.PersianDatePicker" Version="3.3.0" />
         <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.2.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />

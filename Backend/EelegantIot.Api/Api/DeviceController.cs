@@ -163,7 +163,7 @@ public class DeviceController(AppDbContext dbContext) : ControllerBase
         }
 
         ChartDataResponse response = new();
-        response.Labels.AddRange(device.Logs.Select(x => x.CreatedAt).ToList().DistinctBy(x => x.Date));
+        response.Labels.AddRange(device.Logs.Select(x => x.CreatedAt).ToList());
 
         Series temperature = new Series
         {

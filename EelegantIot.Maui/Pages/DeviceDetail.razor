@@ -257,33 +257,33 @@ else
     public void OpenDatePickerDialogTemperature()
     {
         string series = "Temperature";
-        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var parameters = new DialogParameters<CustomDatePickerAndChart> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
-        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+        DialogService.Show<CustomDatePickerAndChart>("چارت", parameters, options);
     }
 
     public void OpenDatePickerDialogHumidity()
     {
         string series = "Humidity";
-        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var parameters = new DialogParameters<CustomDatePickerAndChart> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
-        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+        DialogService.Show<CustomDatePickerAndChart>("چارت", parameters, options);
     }
 
     public void OpenDatePickerDialogCurrent()
     {
         string series = "Current";
-        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var parameters = new DialogParameters<CustomDatePickerAndChart> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
-        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+        DialogService.Show<CustomDatePickerAndChart>("چارت", parameters, options);
     }
 
     public void OpenDatePickerDialogVoltage()
     {
         string series = "Voltage";
-        var parameters = new DialogParameters<CustomDatePicker> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
+        var parameters = new DialogParameters<CustomDatePickerAndChart> { { x => x.id, _item.Id }, { x => x.whichSerieToShow, series } };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
-        DialogService.Show<CustomDatePicker>("چارت", parameters, options);
+        DialogService.Show<CustomDatePickerAndChart>("چارت", parameters, options);
     }
 
     private async Task DeleteDevice()

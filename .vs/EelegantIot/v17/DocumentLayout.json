@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\Desk\\Uni\\Bachler\\S4\\Project\\EelegantIot\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E85051A9-CD77-4465-96A5-4B934BF9EBB7}|EelegantIot.Maui\\EelegantIot.Maui.csproj|d:\\desk\\uni\\bachler\\s4\\project\\eelegantiot\\eelegantiot.maui\\eelegantiot.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{E85051A9-CD77-4465-96A5-4B934BF9EBB7}|EelegantIot.Maui\\EelegantIot.Maui.csproj|solutionrelative:eelegantiot.maui\\eelegantiot.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{7A8F871D-6912-4ECE-A619-6F5CD3875F26}|Backend\\EelegantIot.Shared\\EelegantIot.Shared.csproj|d:\\desk\\uni\\bachler\\s4\\project\\eelegantiot\\backend\\eelegantiot.shared\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A8F871D-6912-4ECE-A619-6F5CD3875F26}|Backend\\EelegantIot.Shared\\EelegantIot.Shared.csproj|solutionrelative:backend\\eelegantiot.shared\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,24 +14,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e3fb24c2-2e84-3146-a5f8-bc25bbc68f8a}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "EelegantIot.Maui",
-              "DocumentMoniker": "D:\\Desk\\Uni\\Bachler\\S4\\Project\\EelegantIot\\EelegantIot.Maui\\EelegantIot.Maui.csproj",
-              "RelativeDocumentMoniker": "EelegantIot.Maui\\EelegantIot.Maui.csproj",
-              "ToolTip": "D:\\Desk\\Uni\\Bachler\\S4\\Project\\EelegantIot\\EelegantIot.Maui\\EelegantIot.Maui.csproj",
-              "RelativeToolTip": "EelegantIot.Maui\\EelegantIot.Maui.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAdAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-06-07T13:54:36.745Z",
+              "Title": "Config.cs",
+              "DocumentMoniker": "D:\\Desk\\Uni\\Bachler\\S4\\Project\\EelegantIot\\Backend\\EelegantIot.Shared\\Config.cs",
+              "RelativeDocumentMoniker": "Backend\\EelegantIot.Shared\\Config.cs",
+              "ToolTip": "D:\\Desk\\Uni\\Bachler\\S4\\Project\\EelegantIot\\Backend\\EelegantIot.Shared\\Config.cs",
+              "RelativeToolTip": "Backend\\EelegantIot.Shared\\Config.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-29T11:04:51.385Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{228e1580-0ef9-329a-bf07-81ebc3dcbf7e}"
             }
           ]
         }

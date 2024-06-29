@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Phoenix API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Elegant API", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
@@ -55,13 +55,9 @@ builder.Services.AddScoped<IDeviceUpdateNotificationService, DeviceUpdateNotific
 builder.Services.AddSignalR();
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-// app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseHttpsRedirection();
+app.UseSwaggerUI();
 app.MapControllers();
 
 var scope = app.Services.CreateScope();
